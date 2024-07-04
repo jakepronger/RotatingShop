@@ -1,0 +1,13 @@
+name: RotatingShop
+version: 1.0
+main: me.jakepronger.rotatingshop.RotatingShop
+description: RotatingShop plugin for Mason
+api-version: 1.20
+depend: [PlayerPoints]
+softdepend: [PlotSquared]
+author: jakepronger
+commands:
+  blackmarket:
+    aliases: bm
+    permission: blackmarket
+    description: something # Teleport to a homemade by the user.

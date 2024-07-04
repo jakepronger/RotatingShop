@@ -1,0 +1,10 @@
+# Include artifact on build files
+!**/.idea/RotatingShop.xml
+
+# Exclude project files
+**/.idea/*.xml
+**/.idea/*.gitignore
+**/.idea/shelf/
+
+# Exclude target folders
+**/target/

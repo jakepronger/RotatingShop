@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="RotatingShop:jar">
+    <output-path>$USER_HOME$/Desktop</output-path>
+    <root id="archive" name="RotatingShop.jar">
+      <element id="module-output" name="RotatingShop" />
+    </root>
+  </artifact>
+</component>
