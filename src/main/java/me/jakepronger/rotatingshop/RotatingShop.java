@@ -51,12 +51,15 @@ public class RotatingShop extends JavaPlugin {
     }
 
     private boolean setupPlayerPoints() {
+
         if (getServer().getPluginManager().getPlugin("PlayerPoints") == null) {
             return false;
         }
+
         if (Bukkit.getPluginManager().isPluginEnabled("PlayerPoints")) {
             ppAPI = PlayerPoints.getInstance().getAPI();
         }
+
         return ppAPI != null;
     }
 

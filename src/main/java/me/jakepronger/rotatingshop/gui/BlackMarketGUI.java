@@ -27,8 +27,12 @@ public class BlackMarketGUI {
 
         ItemStack shards = ItemUtils.getItem(Material.PRISMARINE_SHARD, shardBalance);
 
-        inv.setItem(18, adminPanel);
+        if (p.isOp()) {
+            inv.setItem(18, adminPanel);
+        } else inv.setItem(18, itemsList);
+
         inv.setItem(22, shards);
+
         inv.setItem(26, writeableBook);
 
         p.openInventory(inv);
