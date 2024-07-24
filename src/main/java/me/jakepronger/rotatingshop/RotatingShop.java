@@ -13,7 +13,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class RotatingShop extends JavaPlugin {
 
     public static RotatingShop plugin;
-
+x
     private PlayerPointsAPI ppAPI = null;
 
     @Override
