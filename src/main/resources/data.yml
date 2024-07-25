@@ -1,0 +1,7 @@
+time: # server uptime tracker
+  server-startup:
+  server-shutdown:
+  server-timer:
+
+items:
+  1: whatever

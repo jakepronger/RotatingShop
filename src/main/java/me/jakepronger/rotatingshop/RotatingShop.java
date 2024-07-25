@@ -2,9 +2,11 @@ package me.jakepronger.rotatingshop;
 
 import me.jakepronger.rotatingshop.commands.BlackMarketCommand;
 import me.jakepronger.rotatingshop.listeners.BlackMarketListener;
-import me.jakepronger.rotatingshop.utils.ConfigUtils;
+import me.jakepronger.rotatingshop.utils.DataUtils;
 import me.jakepronger.rotatingshop.utils.Logger;
 
+import me.jakepronger.rotatingshop.utils.TimerUtils;
+import me.jakepronger.rotatingshop.utils.Utils;
 import org.black_ixx.playerpoints.PlayerPoints;
 import org.black_ixx.playerpoints.PlayerPointsAPI;
 
@@ -19,7 +21,9 @@ public class RotatingShop extends JavaPlugin {
     public String editorPerm;
     public String noPerm;
 
-    public ConfigUtils dataFile;
+    public DataUtils dataFile;
+
+    public long START_TIME;
 
     private PlayerPointsAPI ppAPI;
 
@@ -34,7 +38,9 @@ public class RotatingShop extends JavaPlugin {
         loadPerms();
         Logger.log("&aLoaded permissions.");
 
-        dataFile = new ConfigUtils("data.yml");
+        START_TIME = System.currentTimeMillis();
+
+        dataFile = new DataUtils("data.yml");
 
         if (!setupPlayerPoints()) {
             Logger.error("&cPlayerPoints not found!");
@@ -45,11 +51,15 @@ public class RotatingShop extends JavaPlugin {
         registerEvents();
         registerCommands();
 
+        TimerUtils.startTimer();
+
         Logger.log("&aEnabled");
     }
 
     @Override
     public void onDisable() {
+        TimerUtils.updateServerStoppedTime();
+        Utils.closeInventories();
         Logger.log("&cDisabled");
     }
 

@@ -1,17 +1,21 @@
 package me.jakepronger.rotatingshop.utils;
 
-import org.bukkit.configuration.file.FileConfiguration;
-
-import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class TimerUtils {
 
+    // TODO: Add timer
+    public static void startTimer() {
+
+        //Bukkit.getScheduler().run
+
+    }
+
     /*
 
      */
-    public static LocalDateTime getTimer() {
+    public static LocalDateTime getTime() {
         return null;
     }
 
@@ -19,7 +23,17 @@ public class TimerUtils {
         return LocalDate.now();
     }
 
-    private static File file;
+    public static void updateServerStartedTime() {
+
+    }
+
+    public static void updateServerBackupTime() {
+
+    }
+
+    public static void updateServerStoppedTime() {
+
+    }
 
 
 
