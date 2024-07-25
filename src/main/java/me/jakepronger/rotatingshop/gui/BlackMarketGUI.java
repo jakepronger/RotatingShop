@@ -22,7 +22,9 @@ public class BlackMarketGUI {
 
     public static void open(Player p) {
 
-        Inventory inv = InvUtils.getInventory("ʀᴏᴛᴀᴛɪɴɢ ꜱʜᴏᴘ", 3, Material.BLACK_STAINED_GLASS_PANE, Material.RED_STAINED_GLASS_PANE, " ", " ");
+        //Inventory inv = InvUtils.getInventory("ʀᴏᴛᴀᴛɪɴɢ ꜱʜᴏᴘ", 3, Material.BLACK_STAINED_GLASS_PANE, Material.RED_STAINED_GLASS_PANE, " ", " ");
+
+        Inventory inv = Utils.loadInventory("shop.gui", p);
 
         ItemStack writeableBook = ItemUtils.getItem(Material.WRITABLE_BOOK, timeLimit);
 

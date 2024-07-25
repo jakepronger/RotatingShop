@@ -26,12 +26,15 @@ public class RotatingShop extends JavaPlugin {
     @Override
     public void onEnable() {
 
-        dataFile = new ConfigUtils("data.yml");
+        plugin = this;
 
         loadConfig();
-        loadPerms();
+        Logger.log("&aLoaded config.");
 
-        plugin = this;
+        loadPerms();
+        Logger.log("&aLoaded permissions.");
+
+        dataFile = new ConfigUtils("data.yml");
 
         if (!setupPlayerPoints()) {
             Logger.error("&cPlayerPoints not found!");

@@ -1,6 +1,7 @@
 package me.jakepronger.rotatingshop.utils;
 
 import me.jakepronger.rotatingshop.gui.BlackMarketGUI;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -23,8 +24,9 @@ public class Utils {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
-    public static Inventory loadInventory(String configSection, String permission) {
+    public static Inventory loadInventory(String configSection, Player p) {
 
+        // Player p: for permission checks
         // path: shop.gui
 
         FileConfiguration config = plugin.getConfig();
@@ -98,11 +100,18 @@ public class Utils {
         plugin.loadPerms();
     }
 
-    public static void closeInventories() {
+    public static int closeInventories() {
+
+        int size = BlackMarketGUI.openInventories.size();
+
         // close all open inventories
         for (Map.Entry<Player, Inventory> player : BlackMarketGUI.openInventories.entrySet()) {
             player.getKey().closeInventory();
         }
+
+        BlackMarketGUI.openInventories.clear();
+
+        return size;
     }
 
     public static net.md_5.bungee.api.ChatColor getColorFromHex(String hex) {

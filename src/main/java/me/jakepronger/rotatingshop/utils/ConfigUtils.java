@@ -24,8 +24,10 @@ public class ConfigUtils {
             try {
                 if (!file.createNewFile())
                     throw new Exception("createNewFile() returned false for \"" + file.getName() + "\"");
+                else
+                    Logger.log("&aCreated file \"" + file.getName() + "\".");
             } catch (Exception e) {
-                Logger.error(e.getMessage());
+                Logger.error("Error creating ConfigUtils file: " + e.getMessage());
             }
         }
 
