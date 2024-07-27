@@ -1,4 +1,7 @@
-package me.jakepronger.rotatingshop.utils;
+package me.jakepronger.rotatingshop.config;
+
+import me.jakepronger.rotatingshop.utils.ItemSerializer;
+import me.jakepronger.rotatingshop.utils.Logger;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -6,6 +9,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import static me.jakepronger.rotatingshop.RotatingShop.plugin;
@@ -37,6 +42,50 @@ public class DataUtils {
         config = YamlConfiguration.loadConfiguration(file);
     }
 
+    public CompletableFuture<Map.Entry<ItemStack, Double>> getItem(int index) {
+        return CompletableFuture.supplyAsync(() -> {
+
+            FileConfiguration config = getConfig();
+
+            String sectionPath = "data." + index;
+            ConfigurationSection section = config.getConfigurationSection(sectionPath);
+
+            if (section == null) {
+                return null;
+            }
+
+            double price = section.getDouble("price");
+            ItemStack item = ItemSerializer.deserializeItemStack(section.getString("item"));
+
+            return Map.entry(item, price);
+        });
+    }
+
+    public CompletableFuture<ArrayList<Map.Entry<ItemStack, Double>>> getItems() {
+        return CompletableFuture.supplyAsync(() -> {
+
+            FileConfiguration config = getConfig();
+
+            ArrayList<Map.Entry<ItemStack, Double>> list = new ArrayList<>();
+
+            for (int index = 0; true; index++) {
+                String sectionPath = "data." + index;
+                ConfigurationSection section = config.getConfigurationSection(sectionPath);
+
+                if (section == null) {
+                    break;
+                }
+
+                double price = section.getDouble("price");
+                ItemStack item = ItemSerializer.deserializeItemStack(section.getString("item"));
+
+                list.add(Map.entry(item, price));
+            }
+
+            return list;
+        });
+    }
+
     public CompletableFuture<Boolean> setItemPrice(int index, double price) {
         return CompletableFuture.supplyAsync(() -> {
 
@@ -54,7 +103,7 @@ public class DataUtils {
         });
     }
 
-    public CompletableFuture<Boolean> setItemQuantity(int index, int quantity) {
+    /*public CompletableFuture<Boolean> setItemQuantity(int index, int quantity) {
         return CompletableFuture.supplyAsync(() -> {
 
             FileConfiguration config = getConfig();
@@ -72,7 +121,7 @@ public class DataUtils {
 
             return true;
         });
-    }
+    }*/
 
     public CompletableFuture<Boolean> removeItem(int index) {
         return CompletableFuture.supplyAsync(() -> {
@@ -91,7 +140,7 @@ public class DataUtils {
         });
     }
 
-    public CompletableFuture<Boolean> addItem(ItemStack item, int price) {
+    public CompletableFuture<Boolean> addItem(ItemStack item, double price) {
 
         FileConfiguration config = getConfig();
         int nextId = getNextIndex(config);
@@ -113,7 +162,7 @@ public class DataUtils {
         if (section == null)
             return 0;
 
-        return section.getKeys(false).size() + 1;
+        return section.getKeys(false).size();
     }
 
     private FileConfiguration getConfig() {

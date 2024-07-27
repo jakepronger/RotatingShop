@@ -1,6 +1,7 @@
 permissions:
-  reload: rotatingshop.reload
-  editor: rotatingshop.editor
+  blackmarket: rs.blackmarket
+  reload: rs.reload
+  editor: rs.editor
   no-permission:
     use: true
     message: "&cNo permissions!"
@@ -29,46 +30,54 @@ shop:
       - "&7Price: &a%formatted-price% %price%" # %price%, %formatted-price%
       - "&8-> &aLeft click to purchase"
   gui:
-    name: "Rotating Shop"
+    # todo: locked to only have one type in inventory
     items: 12,13,14
+    name: "Rotating Shop"
     rows: 3
-    RED_STAINED_GLASS_PANE:
+    1,3,5,7,9,11,13,15,17,19,21,23,25:
       name: " "
-      slots: 1,3,5,7,9,11,13,15,17,19,21,23,25
-    BLACK_STAINED_GLASS_PANE:
+      type: RED_STAINED_GLASS_PANE
+    0,2,4,6,8,10,12,14,16,18,20,22,24,26:
       name: " "
-      glowing: true # todo: test
-      slots: 0,2,4,6,8,10,12,14,16,18,20,22,24,26
-    WRITABLE_BOOK:
-      name: "&#FF0000ᴛɪᴍᴇ ʟᴇꜰᴛ: %time-left%"
+      type: BLACK_STAINED_GLASS_PANE
+    22:
+      name: "&#A900FFꜱ&#9C0DFFʜ&#8F1AFFᴀ&#8228FFʀ&#7535FFᴅ&#6842FFꜱ &#4E5DFFʙ&#416AFFᴀ&#3477FFʟ&#2784FFᴀ&#1A92FFɴ&#0D9FFFᴄ&#00ACFFᴇ"
+      glowing: true
+      type: PRISMARINE_SHARD
+    26:
+      name: "&#FF0000ᴛɪᴍᴇ ʟᴇꜰᴛ"
+      glowing: true
       lore:
         - "&b%time-left%" # todo: variable updates per second?
-    BARRIER:
+      type: WRITEABLE_BOOK
+    18:
+      name: "&#FF005Dɪ&#F8006Fᴛ&#F10081ᴇ&#E90093ᴍ&#E200A5ꜱ &#D400C9ʟ&#CC00DBɪ&#C500EDꜱ&#BE00FFᴛ"
+      type: BARRIER
       permission_1:
         node: op
-        name: ""
-        slots: 18
-      permission_2:
-        node: something.else
-        name: ""
-        slots: 18
+        name: "&#FF005Dᴀ&#F9006Dᴅ&#F2007Dᴍ&#EC008Eɪ&#E5009Eɴ &#D800BEᴘ&#D200CEᴀ&#CB00DFɴ&#C500EFᴇ&#BE00FFʟ"
+        glowing: true
+        type: BARRIER
 
 items-gui: # Items are filed from top to bottom so any empty slots will contain an item
   # todo: have a background item?
   # todo: do we dupe the item?
+  name: "ꜱʜᴏᴘ ɪᴛᴇᴍꜱ"
+  rows: 6
   next:
     type: ARROW
-    name: ""
-    lore:
-      - ""
+    name: "&#08FB2Cɴᴇxᴛ"
+    #lore:
+    #  - ""
   back:
     type: ARROW
-    name: ""
-    lore:
-      - ""
-  BLACK_STAINED_GLASS_PANE:
+    name: "&#FF0000ʙᴀᴄᴋ"
+    open: shop.gui
+    #lore:
+    #  - ""
+  44,45,46,47,48,49,50,51,52:
     name: " "
-    slots: 44,45,46,47,48,49,50,51,52
+    type: BLACK_STAINED_GLASS_PANE
   #LIGHT_GRAY_STAINED_GLASS_PANE:
     #name: " "
     #slots:

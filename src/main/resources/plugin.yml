@@ -8,5 +8,4 @@ author: jakepronger
 commands:
   blackmarket:
     aliases: bm
-    permission: blackmarket
     description: something

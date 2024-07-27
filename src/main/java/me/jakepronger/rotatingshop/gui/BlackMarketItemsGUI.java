@@ -8,11 +8,19 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static me.jakepronger.rotatingshop.RotatingShop.plugin;
 
 public class BlackMarketItemsGUI {
 
-    private static final String backArrowName = Utils.getColorFromHex("#FF0000") + "ʙᴀᴄᴋ";
-    private static final String nextArrowName = Utils.getColorFromHex("#08FB2C") + "ɴᴇxᴛ";
+    private static final String backArrowName = Utils.format("&#FF0000ʙᴀᴄᴋ");
+    private static final String nextArrowName = Utils.format("&#08FB2Cɴᴇxᴛ");
+
+    public static HashMap<Player, Inventory> openInventories = new HashMap<>();
 
     public static void open(Player p) {
 
@@ -23,18 +31,45 @@ public class BlackMarketItemsGUI {
         ItemStack backArrow = ItemUtils.getItem(Material.ARROW, backArrowName);
         ItemStack nextArrow = ItemUtils.getItem(Material.ARROW, nextArrowName);
 
-        inv.setItem(45, backArrow);
-        inv.setItem(53, nextArrow);
+        plugin.dataFile.getItems().whenComplete((items, throwable) -> {
 
-        inv.setItem(46, blackStainedGlass);
-        inv.setItem(47, blackStainedGlass);
-        inv.setItem(48, blackStainedGlass);
-        inv.setItem(49, blackStainedGlass);
-        inv.setItem(50, blackStainedGlass);
-        inv.setItem(51, blackStainedGlass);
-        inv.setItem(52, blackStainedGlass);
+            for (int i = 0; true; i++) {
 
-        p.openInventory(inv);
+                if (i >= items.size()) {
+                    break;
+                }
+
+                Map.Entry<ItemStack, Double> entry = items.get(i);
+
+                double price = entry.getValue();
+
+                ItemStack item = entry.getKey();
+                ItemMeta meta = item.getItemMeta();
+
+                meta.setDisplayName(Utils.format("&aprice: " + price));
+
+                item.setItemMeta(meta);
+
+                inv.setItem(i, item);
+            }
+
+            inv.setItem(45, backArrow);
+            inv.setItem(53, nextArrow);
+
+            inv.setItem(46, blackStainedGlass);
+            inv.setItem(47, blackStainedGlass);
+            inv.setItem(48, blackStainedGlass);
+            inv.setItem(49, blackStainedGlass);
+            inv.setItem(50, blackStainedGlass);
+            inv.setItem(51, blackStainedGlass);
+            inv.setItem(52, blackStainedGlass);
+
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                openInventories.put(p, inv);
+                p.openInventory(inv);
+            });
+        });
+
     }
 
 }

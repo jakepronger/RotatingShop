@@ -23,15 +23,15 @@ import static me.jakepronger.rotatingshop.RotatingShop.plugin;
 public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
     // item in main hand
-    // /blackmarket add <price> [quantity]
+    // /bm add <price>
 
     @Override
     public void execute(CommandSender sender, String label, String[] args) {
 
         // console supported
         if (args.length == 1 && args[0].equalsIgnoreCase("reload") && sender.isOp()) {
-            int amount = Utils.closeInventories();
-            sender.sendMessage(Utils.format("&c") + "Closed all " + amount + " inventories.");
+            long delay = Utils.reload();
+            sender.sendMessage(Utils.format("&aReloaded in &f" + delay + "ms&a."));
             return;
         }
 
@@ -42,19 +42,29 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
         Player player = (Player) sender;
 
-        if (args.length == 0)
+        //if (!player.hasPermission("rs.blackmarket")) {
+        //    player.sendMessage(Utils.format("&cno perms lol"));
+        //    return;
+        //}
+
+        if (args.length == 0) {
             BlackMarketGUI.open(player);
-        else if (args.length == 1) {
+            return;
+        } else if (args.length == 1) {
             if (args[0].equalsIgnoreCase("reload")
                     && player.isOp()) {
                 //BlackMarketGUI.open(player); // todo: call reload
-                int amount = Utils.closeInventories();
-                player.sendMessage(Utils.format("&c") + "Closed all " + amount + "inventories.");
+                long delay = Utils.reload();
+                player.sendMessage(Utils.format("&aReloaded in &f" + delay + "ms&a."));
+                return;
             } else if (args[0].equalsIgnoreCase("editor")
                 && player.isOp()) {
                 BlackMarketGUI.open(player); // todo: call editor
+                return;
             } else if (args[0].equalsIgnoreCase("add")) {
-
+                // usage
+                sender.sendMessage(Utils.format("&c") + "/" + label + " add <price>");
+                return;
             }
         } else if (args.length == 2 && args[0].equalsIgnoreCase("add")) {
 
@@ -71,40 +81,59 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
             ItemStack item = player.getInventory().getItemInMainHand();
 
             // (async) store item data and price flags are price, (quantity stored in item)
+            plugin.dataFile.addItem(item, price).whenComplete((value, throwable) -> {
+                sender.sendMessage(Utils.format("&aAdded item to data."));
+            });
+
+            return;
         }
 
-        else {
-            if (player.hasPermission(plugin.editorPerm) && player.hasPermission(plugin.reloadPerm)) // todo: player has reload perms show reload usage
-                player.sendMessage(Utils.format("&c") + "/" + label + " [editor/add/reload]");
-            else if (player.hasPermission(plugin.editorPerm))
-                player.sendMessage(Utils.format("&c") + "/" + label + " [editor/add]");
-            else if (player.hasPermission(plugin.reloadPerm))
-                player.sendMessage(Utils.format("&c") + "/" + label + " [reload]");
-            else
-                player.sendMessage(Utils.format("&c") + "/" + label); // usage
-        }
+        if (player.hasPermission(plugin.editorPerm) && player.hasPermission(plugin.reloadPerm)) // todo: player has reload perms show reload usage
+            player.sendMessage(Utils.format("&c") + "/" + label + " [editor/add/reload]");
+        else if (player.hasPermission(plugin.editorPerm))
+            player.sendMessage(Utils.format("&c") + "/" + label + " [editor/add]");
+        else if (player.hasPermission(plugin.reloadPerm))
+            player.sendMessage(Utils.format("&c") + "/" + label + " [reload]");
+        else
+            player.sendMessage(Utils.format("&c") + "/" + label); // usage
     }
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
 
-        if (args.length != 1)
-            return List.of();
-
         final List<String> oneArgList = new ArrayList<>();
+        final List<String> twoArgList = new ArrayList<>();
+
         final List<String> completions = new ArrayList<>();
 
-        if (sender.hasPermission(plugin.reloadPerm))
-            oneArgList.add("reload");
-        if (sender.hasPermission(plugin.editorPerm)) {
-            oneArgList.add("editor");
-            oneArgList.add("add"); // todo: look into adding add function on inventory drag item event..?
+        if (args.length == 1) {
+
+            if (sender.hasPermission(plugin.reloadPerm))
+                oneArgList.add("reload");
+            if (sender.hasPermission(plugin.editorPerm)) {
+                oneArgList.add("editor");
+                oneArgList.add("add"); // todo: look into adding add function on inventory drag item event..?
+            }
+
+            StringUtil.copyPartialMatches(args[0], oneArgList, completions);
+            Collections.sort(completions);
+
+            return completions;
+
+        } else if (args.length == 2
+                && args[0].equalsIgnoreCase("add")
+                && sender.hasPermission(plugin.editorPerm)) {
+
+            // todo: look into tab guidance thing?
+            twoArgList.add("1");
+
+            StringUtil.copyPartialMatches(args[1], twoArgList, completions);
+            Collections.sort(completions);
+
+            return completions;
         }
 
-        StringUtil.copyPartialMatches(args[0], oneArgList, completions);
-        Collections.sort(completions);
-
-        return completions;
+        return List.of();
     }
 
 }

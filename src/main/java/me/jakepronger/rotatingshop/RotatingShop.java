@@ -1,12 +1,13 @@
 package me.jakepronger.rotatingshop;
 
 import me.jakepronger.rotatingshop.commands.BlackMarketCommand;
+import me.jakepronger.rotatingshop.listeners.BlackMarketItemsListener;
 import me.jakepronger.rotatingshop.listeners.BlackMarketListener;
-import me.jakepronger.rotatingshop.utils.DataUtils;
+import me.jakepronger.rotatingshop.config.DataUtils;
 import me.jakepronger.rotatingshop.utils.Logger;
 
 import me.jakepronger.rotatingshop.utils.TimerUtils;
-import me.jakepronger.rotatingshop.utils.Utils;
+
 import org.black_ixx.playerpoints.PlayerPoints;
 import org.black_ixx.playerpoints.PlayerPointsAPI;
 
@@ -59,12 +60,12 @@ public class RotatingShop extends JavaPlugin {
     @Override
     public void onDisable() {
         TimerUtils.updateServerStoppedTime();
-        Utils.closeInventories();
         Logger.log("&cDisabled");
     }
 
     private void registerEvents() {
         Bukkit.getPluginManager().registerEvents(new BlackMarketListener(), plugin);
+        Bukkit.getPluginManager().registerEvents(new BlackMarketItemsListener(), plugin);
     }
 
     private void registerCommands() {
