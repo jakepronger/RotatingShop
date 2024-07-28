@@ -42,17 +42,17 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
         Player player = (Player) sender;
 
-        //if (!player.hasPermission("rs.blackmarket")) {
-        //    player.sendMessage(Utils.format("&cno perms lol"));
-        //    return;
-        //}
+        if (!player.hasPermission(plugin.blackmarketPerm)) {
+            player.sendMessage(Utils.format(plugin.noPerm));
+            return;
+        }
 
         if (args.length == 0) {
             BlackMarketGUI.open(player);
             return;
         } else if (args.length == 1) {
             if (args[0].equalsIgnoreCase("reload")
-                    && player.isOp()) {
+                    && player.hasPermission(plugin.reloadPerm)) {
                 //BlackMarketGUI.open(player); // todo: call reload
                 long delay = Utils.reload();
                 player.sendMessage(Utils.format("&aReloaded in &f" + delay + "ms&a."));

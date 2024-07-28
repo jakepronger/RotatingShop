@@ -20,6 +20,8 @@ public class RotatingShop extends JavaPlugin {
 
     public String reloadPerm;
     public String editorPerm;
+    public String blackmarketPerm;
+
     public String noPerm;
 
     public DataUtils dataFile;
@@ -77,9 +79,10 @@ public class RotatingShop extends JavaPlugin {
     }
 
     public void loadPerms() {
-        reloadPerm = getConfig().getString("permissions.reload", "rotatingshop.reload");
-        editorPerm = getConfig().getString("permissions.editor", "rotatingshop.editor");
-        noPerm = getConfig().getString("permissions.no-permission.message", "&cNo permissions!");
+        blackmarketPerm = getConfig().getString("permissions.blackmarket", "rs.blackmarket");
+        reloadPerm = getConfig().getString("permissions.reload", "rs.reload");
+        editorPerm = getConfig().getString("permissions.editor", "rs.editor");
+        noPerm = getConfig().getString("permissions.no-perm", "&cNo permissions!");
     }
 
     public void loadConfig() {
