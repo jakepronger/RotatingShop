@@ -1,8 +1,10 @@
 # concept idea
 time: # server uptime tracker
-  server-startup:
-  server-shutdown:
-  server-timer:
+  uptime:
+  server-start:
+  server-timer: # in-case server crashes
+  server-stop:
+
 
 items:
   1: whatever
