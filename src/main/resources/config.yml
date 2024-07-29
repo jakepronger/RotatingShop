@@ -26,6 +26,9 @@ purchase:
       use: true
       sound: ENTITY_EXPERIENCE_ORB_PICKUP
 
+# GUI options
+# open: item-gui, shop.gui (path to gui config section) or 'next' or 'back' for pages?
+
 shop:
   rotate-time: 6h
   item-format:

@@ -116,6 +116,8 @@ public class DataUtils {
 
             config.set(sectionPath, null);
 
+            // todo: loop through all other items and adjust their order number
+
             return save(config);
         });
     }

@@ -1,7 +1,6 @@
 package me.jakepronger.rotatingshop.utils;
 
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
