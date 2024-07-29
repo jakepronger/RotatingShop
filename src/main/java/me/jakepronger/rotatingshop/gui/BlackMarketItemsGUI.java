@@ -1,5 +1,6 @@
 package me.jakepronger.rotatingshop.gui;
 
+import me.jakepronger.rotatingshop.utils.InvUtils;
 import me.jakepronger.rotatingshop.utils.ItemUtils;
 import me.jakepronger.rotatingshop.utils.Utils;
 
@@ -24,7 +25,8 @@ public class BlackMarketItemsGUI {
 
     public static void open(Player p) {
 
-        Inventory inv = Bukkit.createInventory(null, 9*6, "ꜱʜᴏᴘ ɪᴛᴇᴍꜱ");
+        Inventory inv; /*= Bukkit.createInventory(null, 9*6, "ꜱʜᴏᴘ ɪᴛᴇᴍꜱ");*/
+        inv = InvUtils.loadInventory("items-gui", p);
 
         ItemStack blackStainedGlass = ItemUtils.getItem(Material.BLACK_STAINED_GLASS_PANE, " ");
 

@@ -37,14 +37,15 @@ public class BlackMarketListener implements Listener {
 
         // check if item has open flag
         ItemStack item = e.getClickedInventory().getItem(e.getRawSlot());
-        if (item != null) {
-            PersistentDataContainer pData = item.getItemMeta().getPersistentDataContainer();
-            String openValue = pData.get(new NamespacedKey(plugin, "open"), PersistentDataType.STRING);
-            if (openValue != null
-                    && openValue.equalsIgnoreCase("items-gui")) {
-                BlackMarketItemsGUI.open(p);
-                Bukkit.broadcastMessage("triggered");
-            }
+
+        if (item == null)
+            return;
+
+        PersistentDataContainer pData = item.getItemMeta().getPersistentDataContainer();
+        String openValue = pData.get(new NamespacedKey(plugin, "open"), PersistentDataType.STRING);
+        if (openValue != null
+                && openValue.equalsIgnoreCase("items-gui")) {
+            BlackMarketItemsGUI.open(p);
         }
     }
 

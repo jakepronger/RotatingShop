@@ -1,5 +1,6 @@
 package me.jakepronger.rotatingshop.gui;
 
+import me.jakepronger.rotatingshop.utils.InvUtils;
 import me.jakepronger.rotatingshop.utils.Utils;
 
 import org.bukkit.entity.Player;
@@ -18,7 +19,7 @@ public class BlackMarketGUI {
 
     public static void open(Player p) {
 
-        Inventory inv = Utils.loadInventory("shop.gui", p);
+        Inventory inv = InvUtils.loadInventory("shop.gui", p);
 
         //ItemStack writeableBook = ItemUtils.getItem(Material.WRITABLE_BOOK, timeLimit);
 

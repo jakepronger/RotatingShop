@@ -1,10 +1,14 @@
 permissions:
+  no-perm: "&cNo permissions!"
   black-market:
     require: true
     node: rs.blackmarket
-  reload: rs.reload
-  editor: rs.editor
-  no-perm: "&cNo permissions!"
+  reload:
+    require: true
+    node: rs.reload
+  editor:
+    require: true
+    node: rs.editor
 
 purchase:
   succeeded:
@@ -53,6 +57,7 @@ shop:
     18:
       name: "&#FF005Dɪ&#F8006Fᴛ&#F10081ᴇ&#E90093ᴍ&#E200A5ꜱ &#D400C9ʟ&#CC00DBɪ&#C500EDꜱ&#BE00FFᴛ"
       type: BARRIER
+      open: items-gui
       permission_1:
         node: op
         name: "&#FF005Dᴀ&#F9006Dᴅ&#F2007Dᴍ&#EC008Eɪ&#E5009Eɴ &#D800BEᴘ&#D200CEᴀ&#CB00DFɴ&#C500EFᴇ&#BE00FFʟ"
@@ -64,15 +69,16 @@ items-gui: # Items are filed from top to bottom so any empty slots will contain 
   # todo: do we dupe the item?
   name: "ꜱʜᴏᴘ ɪᴛᴇᴍꜱ"
   rows: 6
-  next:
+  53:
     type: ARROW
     name: "&#08FB2Cɴᴇxᴛ"
+    open: next
     #lore:
     #  - ""
-  back:
+  43:
     type: ARROW
     name: "&#FF0000ʙᴀᴄᴋ"
-    open: shop.gui
+    open: back
     #lore:
     #  - ""
   44,45,46,47,48,49,50,51,52:

@@ -103,26 +103,6 @@ public class DataUtils {
         });
     }
 
-    /*public CompletableFuture<Boolean> setItemQuantity(int index, int quantity) {
-        return CompletableFuture.supplyAsync(() -> {
-
-            FileConfiguration config = getConfig();
-
-            String sectionPath = "data." + index;
-
-            ConfigurationSection section = config.getConfigurationSection(sectionPath);
-            if (section == null)
-                return false;
-
-            ItemStack item = ItemSerializer.deserializeItemStack(section.getString("item"));
-            item.setAmount(quantity);
-
-            section.set("item", ItemSerializer.serializeItemStack(item));
-
-            return true;
-        });
-    }*/
-
     public CompletableFuture<Boolean> removeItem(int index) {
         return CompletableFuture.supplyAsync(() -> {
 

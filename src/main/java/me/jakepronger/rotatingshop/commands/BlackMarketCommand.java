@@ -1,6 +1,7 @@
 package me.jakepronger.rotatingshop.commands;
 
 import me.jakepronger.rotatingshop.gui.BlackMarketGUI;
+import me.jakepronger.rotatingshop.gui.BlackMarketItemsGUI;
 import me.jakepronger.rotatingshop.utils.Utils;
 import me.jakepronger.rotatingshop.utils.command.CommandInfo;
 import me.jakepronger.rotatingshop.utils.command.PluginCommand;
@@ -42,31 +43,52 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
         Player player = (Player) sender;
 
-        if (!player.hasPermission(plugin.blackmarketPerm)) {
-            player.sendMessage(Utils.format(plugin.noPerm));
-            return;
-        }
-
         if (args.length == 0) {
+
+            if (plugin.useBlackMarketPerm && !player.hasPermission(plugin.blackmarketPerm)) {
+                player.sendMessage(Utils.format(plugin.noPerm));
+                return;
+            }
+
             BlackMarketGUI.open(player);
+
             return;
+
         } else if (args.length == 1) {
-            if (args[0].equalsIgnoreCase("reload")
-                    && player.hasPermission(plugin.reloadPerm)) {
-                //BlackMarketGUI.open(player); // todo: call reload
+            if (args[0].equalsIgnoreCase("reload")) {
+
+                if (plugin.useReloadPerm && !player.hasPermission(plugin.reloadPerm)) {
+                    player.sendMessage(Utils.format(plugin.noPerm));
+                    return;
+                }
+
                 long delay = Utils.reload();
                 player.sendMessage(Utils.format("&aReloaded in &f" + delay + "ms&a."));
+
                 return;
-            } else if (args[0].equalsIgnoreCase("editor")
-                && player.isOp()) {
-                BlackMarketGUI.open(player); // todo: call editor
+
+            } else if (args[0].equalsIgnoreCase("editor")) {
+
+                if (plugin.useEditorPerm && !player.hasPermission(plugin.editorPerm)) {
+                    player.sendMessage(Utils.format(plugin.noPerm));
+                    return;
+                }
+
+                BlackMarketItemsGUI.open(player);
+
                 return;
+
             } else if (args[0].equalsIgnoreCase("add")) {
                 // usage
                 sender.sendMessage(Utils.format("&c") + "/" + label + " add <price>");
                 return;
             }
         } else if (args.length == 2 && args[0].equalsIgnoreCase("add")) {
+
+            if (plugin.useEditorPerm && !player.hasPermission(plugin.editorPerm)) {
+                player.sendMessage(Utils.format(plugin.noPerm));
+                return;
+            }
 
             // parse price
             double price;
