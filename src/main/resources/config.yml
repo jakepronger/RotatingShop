@@ -2,7 +2,7 @@ permissions:
   no-perm: "&cNo permissions!"
   black-market:
     require: true
-    node: rs.blackmarket
+    node: rs.black-market
   reload:
     require: true
     node: rs.reload
@@ -69,19 +69,19 @@ items-gui: # Items are filed from top to bottom so any empty slots will contain 
   # todo: do we dupe the item?
   name: "ꜱʜᴏᴘ ɪᴛᴇᴍꜱ"
   rows: 6
+  45:
+    type: ARROW
+    name: "&#FF0000ʙᴀᴄᴋ"
+    open: back
+    #lore:
+    #  - ""
   53:
     type: ARROW
     name: "&#08FB2Cɴᴇxᴛ"
     open: next
     #lore:
     #  - ""
-  43:
-    type: ARROW
-    name: "&#FF0000ʙᴀᴄᴋ"
-    open: back
-    #lore:
-    #  - ""
-  44,45,46,47,48,49,50,51,52:
+  46,47,48,49,50,51,52:
     name: " "
     type: BLACK_STAINED_GLASS_PANE
   #LIGHT_GRAY_STAINED_GLASS_PANE:
