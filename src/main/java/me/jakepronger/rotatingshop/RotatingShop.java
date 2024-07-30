@@ -30,6 +30,7 @@ public class RotatingShop extends JavaPlugin {
     public String noPerm;
 
     public DataUtils dataFile;
+    public TimerUtils timerUtils;
 
     public long START_TIME;
 
@@ -49,6 +50,7 @@ public class RotatingShop extends JavaPlugin {
         Logger.log("&aLoaded permissions.");
 
         dataFile = new DataUtils("data.yml");
+        timerUtils = new TimerUtils(dataFile);
 
         if (!setupPlayerPoints()) {
             Logger.error("&cPlayerPoints not found!");
@@ -59,14 +61,14 @@ public class RotatingShop extends JavaPlugin {
         registerEvents();
         registerCommands();
 
-        TimerUtils.startTimer();
+        timerUtils.startTimer();
 
         Logger.log("&aEnabled");
     }
 
     @Override
     public void onDisable() {
-        TimerUtils.updateServerStoppedTime();
+        timerUtils.updateServerStoppedTime();
         Logger.log("&cDisabled");
     }
 

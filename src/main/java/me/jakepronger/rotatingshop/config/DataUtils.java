@@ -9,7 +9,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
-import java.io.ObjectInputFilter;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -18,8 +17,8 @@ import static me.jakepronger.rotatingshop.RotatingShop.plugin;
 
 public class DataUtils {
 
-    public final String filePath;
-    public final File file;
+    private final String filePath;
+    private final File file;
 
     private final FileConfiguration config;
 
@@ -122,7 +121,10 @@ public class DataUtils {
                 if (loopSection == null)
                     break;
                 else {
-                    loopSection.set("data." + (loopId - 1), loopId);
+                    String newSectionPath = "data." + (loopId - 1);
+                    loopSection.set(newSectionPath + ".item", loopId);
+                    loopSection.set(newSectionPath + ".price", loopId);
+                    config.set("data." + loopId, null);
                 }
             }
 
@@ -155,7 +157,7 @@ public class DataUtils {
         return section.getKeys(false).size();
     }
 
-    private FileConfiguration getConfig() {
+    public FileConfiguration getConfig() {
         return config;
     }
 
