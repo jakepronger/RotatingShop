@@ -9,6 +9,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
+import java.io.ObjectInputFilter;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -115,6 +116,15 @@ public class DataUtils {
                 return false;
 
             config.set(sectionPath, null);
+
+            for (int loopId = index; true; loopId++) {
+                ConfigurationSection loopSection = config.getConfigurationSection("data." + loopId);
+                if (loopSection == null)
+                    break;
+                else {
+                    loopSection.set("data." + (loopId - 1), loopId);
+                }
+            }
 
             return save(config);
         });

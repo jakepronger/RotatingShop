@@ -1,7 +1,6 @@
 package me.jakepronger.rotatingshop.utils;
 
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,11 +12,11 @@ public class TimerUtils {
 
     // TODO: Add timer
     public static void startTimer() {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
 
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 
-        });
 
+        }, 2*(20*60), 2*(20*60));
     }
 
     /*

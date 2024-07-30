@@ -40,13 +40,13 @@ public class RotatingShop extends JavaPlugin {
 
         plugin = this;
 
+        START_TIME = System.currentTimeMillis();
+
         loadConfig();
         Logger.log("&aLoaded config.");
 
         loadPerms();
         Logger.log("&aLoaded permissions.");
-
-        START_TIME = System.currentTimeMillis();
 
         dataFile = new DataUtils("data.yml");
 
