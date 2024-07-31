@@ -1,12 +1,12 @@
 # concept idea
 time: # server uptime tracker
-  uptime: # overall uptime in seconds
+  uptime: # overall uptime in minutes
   server:
     last-startup:
     last-shutdown:
   uptime-updater:
     use: true # uptime is updated every specified minutes in-case of server crash
-    time: 2 # minutes
+    time: 5 # minutes
 
 items:
   1: whatever

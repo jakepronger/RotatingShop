@@ -65,6 +65,7 @@ shop:
         node: op
         name: "&#FF005Dᴀ&#F9006Dᴅ&#F2007Dᴍ&#EC008Eɪ&#E5009Eɴ &#D800BEᴘ&#D200CEᴀ&#CB00DFɴ&#C500EFᴇ&#BE00FFʟ"
         glowing: true
+        open: items-gui
         type: BARRIER
 
 items-gui: # Items are filed from top to bottom so any empty slots will contain an item
