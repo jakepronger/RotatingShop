@@ -9,7 +9,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
-import java.io.ObjectInputFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -21,7 +23,7 @@ public class DataUtils {
     public final String filePath;
     public final File file;
 
-    private final FileConfiguration config;
+    private FileConfiguration config;
 
     public DataUtils(String fileName) {
 
@@ -30,13 +32,20 @@ public class DataUtils {
         file = new File(filePath);
 
         if (!file.exists()) {
+
+            InputStream stream = plugin.getResource(fileName);
+
+            if (stream == null) {
+                Logger.error("Resource not found: " + fileName);
+                return;
+            }
+
             try {
-                if (!file.createNewFile())
-                    throw new Exception("createNewFile() returned false for \"" + file.getName() + "\"");
-                else
-                    Logger.log("&aCreated file \"" + file.getName() + "\".");
-            } catch (Exception e) {
-                Logger.error("Error creating ConfigUtils file: " + e.getMessage());
+                Files.copy(stream, new File(plugin.getDataFolder(), fileName).toPath());
+                Logger.log("&aCreated file: " + fileName);
+            } catch (IOException e) {
+                Logger.error("Error creating DataUtils file: " + e.getMessage());
+                return;
             }
         }
 

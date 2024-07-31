@@ -2,6 +2,7 @@ package me.jakepronger.rotatingshop.utils;
 
 import org.bukkit.ChatColor;
 
+import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,8 +37,13 @@ public class Utils {
         Logger.log("&aReloading...");
         Logger.log("&eClosed &f" + InvUtils.closeInventories() + "&e inventories.");
 
+        boolean newlyCreated = new File(plugin.getDataFolder() + File.separator + "config.yml").exists();
+
         plugin.loadConfig();
-        Logger.log("&eReloaded config.");
+
+        if (newlyCreated)
+            Logger.log("&aCreated config.");
+        else Logger.log("&aReloaded config.");
 
         plugin.loadPerms();
         Logger.log("&eReloaded permissions.");

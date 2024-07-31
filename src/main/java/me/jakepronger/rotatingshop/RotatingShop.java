@@ -14,6 +14,8 @@ import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+
 public class RotatingShop extends JavaPlugin {
 
     public static RotatingShop plugin;
@@ -42,8 +44,13 @@ public class RotatingShop extends JavaPlugin {
 
         START_TIME = System.currentTimeMillis();
 
+        boolean newlyCreated = new File(plugin.getDataFolder() + File.separator + "config.yml").exists();
+
         loadConfig();
-        Logger.log("&aLoaded config.");
+
+        if (newlyCreated)
+            Logger.log("&aCreated config.");
+        else Logger.log("&aLoaded config.");
 
         loadPerms();
         Logger.log("&aLoaded permissions.");
