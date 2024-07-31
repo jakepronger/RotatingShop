@@ -1,10 +1,9 @@
 package me.jakepronger.rotatingshop.utils;
 
 import me.jakepronger.rotatingshop.config.DataUtils;
+
 import org.bukkit.Bukkit;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
 
 import static me.jakepronger.rotatingshop.RotatingShop.plugin;
@@ -17,32 +16,32 @@ public class TimerUtils {
     private final int uptimeUpdaterMinutes;
 
     public TimerUtils(DataUtils dataUtils) {
+
         this.dataUtils = dataUtils;
 
         useUptimeUpdater = dataUtils.getConfig().getBoolean("time.uptime-updater.use", true);
         uptimeUpdaterMinutes = dataUtils.getConfig().getInt("time.uptime-updater.time", 5);
     }
 
-    // TODO: Add timer
+    private int taskId;
     public void startTimer() {
-        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
 
-            dataUtils.
+        if (!useUptimeUpdater)
+            return;
 
-        }, 2*(20*60), 2*(20*60));
+        taskId = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+
+        }, uptimeUpdaterMinutes*(20*60), uptimeUpdaterMinutes*(20*60)).getTaskId();
     }
 
-    /*
+    public void stopTimer() {
 
-     */
-    @Deprecated
-    public LocalDateTime getTime() {
-        return null;
-    }
+        if (taskId == 0)
+            return;
 
-    @Deprecated
-    private LocalDate getCurrentDate() {
-        return LocalDate.now();
+        Bukkit.getScheduler().cancelTask(taskId);
+
+        taskId = 0;
     }
 
     public CompletableFuture<Boolean> updateServerStartedTime() {

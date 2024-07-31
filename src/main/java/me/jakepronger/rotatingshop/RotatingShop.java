@@ -93,7 +93,6 @@ public class RotatingShop extends JavaPlugin {
     }
 
     public void loadPerms() {
-
         blackmarketPerm = getConfig().getString("permissions.black-market.node", "rs.black-market");
         useBlackMarketPerm = getConfig().getBoolean("permissions.black-market.require", true);
 

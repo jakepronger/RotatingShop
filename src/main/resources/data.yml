@@ -1,6 +1,5 @@
-# concept idea
 time: # server uptime tracker
-  uptime: # overall uptime in minutes
+  uptime: 329 # overall uptime in minutes
   server:
     last-startup:
     last-shutdown:
@@ -9,4 +8,3 @@ time: # server uptime tracker
     time: 5 # minutes
 
 items:
-  1: whatever

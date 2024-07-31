@@ -164,7 +164,7 @@ public class DataUtils {
         return section.getKeys(false).size();
     }
 
-    private FileConfiguration getConfig() {
+    public FileConfiguration getConfig() {
         return config;
     }
 
