@@ -37,13 +37,7 @@ public class Utils {
         Logger.log("&aReloading...");
         Logger.log("&eClosed &f" + InvUtils.closeInventories() + "&e inventories.");
 
-        boolean newlyCreated = new File(plugin.getDataFolder() + File.separator + "config.yml").exists();
-
-        plugin.loadConfig();
-
-        if (newlyCreated)
-            Logger.log("&aCreated config.");
-        else Logger.log("&aReloaded config.");
+        plugin.loadConfig(true);
 
         plugin.loadPerms();
         Logger.log("&eReloaded permissions.");

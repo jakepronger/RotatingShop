@@ -1,6 +1,7 @@
 package me.jakepronger.rotatingshop;
 
 import me.jakepronger.rotatingshop.commands.BlackMarketCommand;
+import me.jakepronger.rotatingshop.config.ConfigUtils;
 import me.jakepronger.rotatingshop.listeners.BlackMarketItemsListener;
 import me.jakepronger.rotatingshop.listeners.BlackMarketListener;
 import me.jakepronger.rotatingshop.config.DataUtils;
@@ -8,53 +9,30 @@ import me.jakepronger.rotatingshop.utils.Logger;
 
 import me.jakepronger.rotatingshop.utils.TimerUtils;
 
-import org.black_ixx.playerpoints.PlayerPoints;
 import org.black_ixx.playerpoints.PlayerPointsAPI;
-
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
 
 public class RotatingShop extends JavaPlugin {
 
     public static RotatingShop plugin;
-
-    public String reloadPerm;
-    public boolean useReloadPerm;
-
-    public String editorPerm;
-    public boolean useEditorPerm;
-
-    public String blackmarketPerm;
-    public boolean useBlackMarketPerm;
-
-    public String noPerm;
 
     public DataUtils dataFile;
     public TimerUtils timerUtils;
 
     public long START_TIME;
 
-    private PlayerPointsAPI ppAPI;
+    private ConfigUtils config;
 
     @Override
     public void onEnable() {
 
         plugin = this;
 
+        config = new ConfigUtils(plugin);
+
+        // todo: integrate with timer
         START_TIME = System.currentTimeMillis();
-
-        boolean newlyCreated = new File(plugin.getDataFolder() + File.separator + "config.yml").exists();
-
-        loadConfig();
-
-        if (newlyCreated)
-            Logger.log("&aCreated config.");
-        else Logger.log("&aLoaded config.");
-
-        loadPerms();
-        Logger.log("&aLoaded permissions.");
 
         dataFile = new DataUtils("data.yml");
         timerUtils = new TimerUtils(dataFile);
@@ -86,41 +64,6 @@ public class RotatingShop extends JavaPlugin {
 
     private void registerCommands() {
         getCommand("blackmarket").setExecutor(new BlackMarketCommand());
-    }
-
-    public PlayerPointsAPI getPlayerPoints() {
-        return plugin.ppAPI;
-    }
-
-    public void loadPerms() {
-        blackmarketPerm = getConfig().getString("permissions.black-market.node", "rs.black-market");
-        useBlackMarketPerm = getConfig().getBoolean("permissions.black-market.require", true);
-
-        reloadPerm = getConfig().getString("permissions.reload.node", "rs.reload");
-        useReloadPerm = getConfig().getBoolean("permissions.reload.require", true);
-
-        editorPerm = getConfig().getString("permissions.editor.node", "rs.editor");
-        useEditorPerm = getConfig().getBoolean("permissions.editor.require", true);
-
-        noPerm = getConfig().getString("permissions.no-perm", "&cNo permissions!");
-    }
-
-    public void loadConfig() {
-        saveDefaultConfig();
-        reloadConfig();
-    }
-
-    private boolean setupPlayerPoints() {
-
-        if (getServer().getPluginManager().getPlugin("PlayerPoints") == null) {
-            return false;
-        }
-
-        if (Bukkit.getPluginManager().isPluginEnabled("PlayerPoints")) {
-            ppAPI = PlayerPoints.getInstance().getAPI();
-        }
-
-        return ppAPI != null;
     }
 
 }
