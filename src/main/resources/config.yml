@@ -73,21 +73,20 @@ items-gui: # Items are filed from top to bottom so any empty slots will contain 
   # todo: do we dupe the item?
   name: "ꜱʜᴏᴘ ɪᴛᴇᴍꜱ"
   rows: 6
+  0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44:
+    name: " "
+    type: LIGHT_GRAY_STAINED_GLASS_PANE
+    items: true
   45:
     type: ARROW
     name: "&#FF0000ʙᴀᴄᴋ"
     open: back
-    #lore:
-    #  - ""
+  46,47,48,49,50,51,52:
+    name: " "
+    type: BLACK_STAINED_GLASS_PANE
   53:
     type: ARROW
     name: "&#08FB2Cɴᴇxᴛ"
     open: next
     #lore:
     #  - ""
-  46,47,48,49,50,51,52:
-    name: " "
-    type: BLACK_STAINED_GLASS_PANE
-  #LIGHT_GRAY_STAINED_GLASS_PANE:
-    #name: " "
-    #slots:
