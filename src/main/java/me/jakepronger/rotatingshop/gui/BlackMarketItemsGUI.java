@@ -20,13 +20,7 @@ public class BlackMarketItemsGUI {
 
     public static void open(Player p) {
 
-        Inventory inv; /*= Bukkit.createInventory(null, 9*6, "ꜱʜᴏᴘ ɪᴛᴇᴍꜱ");*/
-        inv = InvUtils.loadInventory("items-gui", p);
-
-        //ItemStack blackStainedGlass = ItemUtils.getItem(Material.BLACK_STAINED_GLASS_PANE, " ");
-
-        //ItemStack backArrow = ItemUtils.getItem(Material.ARROW, backArrowName);
-        //ItemStack nextArrow = ItemUtils.getItem(Material.ARROW, nextArrowName);
+        Inventory inv = InvUtils.loadInventory("items-gui", p);
 
         plugin.dataFile.getItems().whenComplete((items, throwable) -> {
 
@@ -49,17 +43,6 @@ public class BlackMarketItemsGUI {
 
                 inv.setItem(i, item);
             }
-
-            //inv.setItem(45, backArrow);
-            //inv.setItem(53, nextArrow);
-
-            /*inv.setItem(46, blackStainedGlass);
-            inv.setItem(47, blackStainedGlass);
-            inv.setItem(48, blackStainedGlass);
-            inv.setItem(49, blackStainedGlass);
-            inv.setItem(50, blackStainedGlass);
-            inv.setItem(51, blackStainedGlass);
-            inv.setItem(52, blackStainedGlass);*/
 
             Bukkit.getScheduler().runTask(plugin, () -> {
                 openInventories.put(p, inv);
