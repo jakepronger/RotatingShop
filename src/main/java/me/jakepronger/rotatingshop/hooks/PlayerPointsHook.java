@@ -1,37 +1,53 @@
 package me.jakepronger.rotatingshop.hooks;
 
+import me.jakepronger.rotatingshop.utils.Logger;
+
 import org.black_ixx.playerpoints.PlayerPoints;
 import org.black_ixx.playerpoints.PlayerPointsAPI;
 
 import org.bukkit.Bukkit;
-
-import static me.jakepronger.rotatingshop.RotatingShop.plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class PlayerPointsHook {
 
-    public PlayerPointsHook() {
-        hook();
-    }
+    private final JavaPlugin plugin;
 
     private PlayerPointsAPI ppAPI;
-    public PlayerPointsAPI getPlayerPoints() {
+
+    public PlayerPointsHook(JavaPlugin plugin) {
+        this.plugin = plugin;
+    }
+
+    public PlayerPointsAPI get() {
         return ppAPI;
     }
 
-    public void hook() {
+    public void unhook() {
+        ppAPI = null;
+        Logger.log("&cUnhooked from PlayerPoints!");
+    }
+
+    public boolean hook() {
 
         if (plugin.getServer().getPluginManager().getPlugin("PlayerPoints") == null) {
-            return;
+            Logger.error("Failed to locate required plugin: PlayerPoints");
+            return false;
         }
 
-        if (Bukkit.getPluginManager().isPluginEnabled("PlayerPoints")) {
-            try {
-                ppAPI = PlayerPoints.getInstance().getAPI();
-            } catch (Exception e) {
-
-            }
+        if (!Bukkit.getPluginManager().isPluginEnabled("PlayerPoints")) {
+            Logger.error("Failed to hook into PlayerPoints: Plugin is not enabled");
+            return false;
         }
 
+        try {
+            ppAPI = PlayerPoints.getInstance().getAPI();
+        } catch (Exception e) {
+            Logger.error("Failed to hook into PlayerPoints: " + e.getMessage());
+            return false;
+        }
+
+        Logger.log("&aHooked into PlayerPoints!");
+        return true;
     }
 
 }
