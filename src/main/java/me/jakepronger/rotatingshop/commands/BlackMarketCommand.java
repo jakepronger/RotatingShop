@@ -1,5 +1,6 @@
 package me.jakepronger.rotatingshop.commands;
 
+import me.jakepronger.rotatingshop.config.ConfigUtils;
 import me.jakepronger.rotatingshop.gui.BlackMarketGUI;
 import me.jakepronger.rotatingshop.gui.BlackMarketItemsGUI;
 import me.jakepronger.rotatingshop.utils.Utils;
@@ -43,10 +44,12 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
         Player player = (Player) sender;
 
+        ConfigUtils config = plugin.getConfigUtils();
+
         if (args.length == 0) {
 
-            if (plugin.useBlackMarketPerm && !player.hasPermission(plugin.blackmarketPerm)) {
-                player.sendMessage(Utils.format(plugin.noPerm));
+            if (config.useBlackMarketPerm && !player.hasPermission(config.blackmarketPerm)) {
+                player.sendMessage(Utils.format(plugin.getConfigUtils().noPerm));
                 return;
             }
 
@@ -57,8 +60,8 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
         } else if (args.length == 1) {
             if (args[0].equalsIgnoreCase("reload")) {
 
-                if (plugin.useReloadPerm && !player.hasPermission(plugin.reloadPerm)) {
-                    player.sendMessage(Utils.format(plugin.noPerm));
+                if (config.useReloadPerm && !player.hasPermission(config.reloadPerm)) {
+                    player.sendMessage(Utils.format(config.noPerm));
                     return;
                 }
 
@@ -69,8 +72,8 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
             } else if (args[0].equalsIgnoreCase("editor")) {
 
-                if (plugin.useEditorPerm && !player.hasPermission(plugin.editorPerm)) {
-                    player.sendMessage(Utils.format(plugin.noPerm));
+                if (config.useEditorPerm && !player.hasPermission(config.editorPerm)) {
+                    player.sendMessage(Utils.format(config.noPerm));
                     return;
                 }
 
@@ -85,8 +88,8 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
             }
         } else if (args.length == 2 && args[0].equalsIgnoreCase("add")) {
 
-            if (plugin.useEditorPerm && !player.hasPermission(plugin.editorPerm)) {
-                player.sendMessage(Utils.format(plugin.noPerm));
+            if (config.useEditorPerm && !player.hasPermission(config.editorPerm)) {
+                player.sendMessage(Utils.format(config.noPerm));
                 return;
             }
 
@@ -110,11 +113,11 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
             return;
         }
 
-        if (player.hasPermission(plugin.editorPerm) && player.hasPermission(plugin.reloadPerm)) // todo: player has reload perms show reload usage
+        if (player.hasPermission(config.editorPerm) && player.hasPermission(config.reloadPerm)) // todo: player has reload perms show reload usage
             player.sendMessage(Utils.format("&c") + "/" + label + " [editor/add/reload]");
-        else if (player.hasPermission(plugin.editorPerm))
+        else if (player.hasPermission(config.editorPerm))
             player.sendMessage(Utils.format("&c") + "/" + label + " [editor/add]");
-        else if (player.hasPermission(plugin.reloadPerm))
+        else if (player.hasPermission(config.reloadPerm))
             player.sendMessage(Utils.format("&c") + "/" + label + " [reload]");
         else
             player.sendMessage(Utils.format("&c") + "/" + label); // usage
@@ -128,11 +131,13 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
         final List<String> completions = new ArrayList<>();
 
+        ConfigUtils config = plugin.getConfigUtils();
+
         if (args.length == 1) {
 
-            if (sender.hasPermission(plugin.reloadPerm))
+            if (sender.hasPermission(config.reloadPerm))
                 oneArgList.add("reload");
-            if (sender.hasPermission(plugin.editorPerm)) {
+            if (sender.hasPermission(config.editorPerm)) {
                 oneArgList.add("editor");
                 oneArgList.add("add"); // todo: look into adding add function on inventory drag item event..?
             }
@@ -144,7 +149,7 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
         } else if (args.length == 2
                 && args[0].equalsIgnoreCase("add")
-                && sender.hasPermission(plugin.editorPerm)) {
+                && sender.hasPermission(config.editorPerm)) {
 
             // todo: look into tab guidance thing?
             twoArgList.add("1");

@@ -12,8 +12,12 @@ public class TimerUtils {
 
     private final DataUtils dataUtils;
 
+    private final long START_TIME;
+
     private final boolean useUptimeUpdater;
     private final int uptimeUpdaterMinutes;
+
+    private int taskId;
 
     public TimerUtils(DataUtils dataUtils) {
 
@@ -21,9 +25,10 @@ public class TimerUtils {
 
         useUptimeUpdater = dataUtils.getConfig().getBoolean("time.uptime-updater.use", true);
         uptimeUpdaterMinutes = dataUtils.getConfig().getInt("time.uptime-updater.time", 5);
+
+        START_TIME = System.currentTimeMillis();
     }
 
-    private int taskId;
     public void startTimer() {
 
         if (!useUptimeUpdater)

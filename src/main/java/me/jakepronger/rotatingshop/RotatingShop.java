@@ -18,11 +18,9 @@ public class RotatingShop extends JavaPlugin {
     public static RotatingShop plugin;
 
     public DataUtils dataFile;
-    public TimerUtils timerUtils;
-
-    public long START_TIME;
-
     private ConfigUtils config;
+
+    public TimerUtils timerUtils;
 
     private PlayerPointsHook ppHook;
 
@@ -40,8 +38,6 @@ public class RotatingShop extends JavaPlugin {
             return;
         }
 
-        // todo: integrate with timer
-        START_TIME = System.currentTimeMillis();
         timerUtils = new TimerUtils(dataFile);
         timerUtils.startTimer();
 
@@ -56,6 +52,10 @@ public class RotatingShop extends JavaPlugin {
         ppHook.unhook();
         timerUtils.updateServerStoppedTime();
         Logger.log("&cDisabled");
+    }
+
+    public ConfigUtils getConfigUtils() {
+        return config;
     }
 
     private void registerEvents() {
