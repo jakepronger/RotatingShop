@@ -11,7 +11,7 @@ public class Logger {
     }
 
     public static void debug(String message) {
-        if (plugin.getConfigUtils().logDebug)
+        if (plugin.getConfigUtils().isLogDebug())
             Bukkit.getConsoleSender().sendMessage(Utils.format("&e") + "[" + plugin.getName() + "] [DEBUG] " + Utils.format(message));
     }
 
