@@ -24,7 +24,7 @@ public class PlayerPointsHook {
 
     public void unhook() {
         ppAPI = null;
-        Logger.log("&cUnhooked from PlayerPoints!");
+        Logger.log("&aUnhooked from PlayerPoints!");
     }
 
     public boolean hook() {

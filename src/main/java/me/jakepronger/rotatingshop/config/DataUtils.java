@@ -49,7 +49,7 @@ public class DataUtils {
             }
         }
 
-        config = YamlConfiguration.loadConfiguration(file);
+        loadConfig();
     }
 
     public CompletableFuture<Map.Entry<ItemStack, Double>> getItem(int index) {
@@ -166,6 +166,24 @@ public class DataUtils {
 
     public FileConfiguration getConfig() {
         return config;
+    }
+
+    public void reloadConfig() {
+        loadConfig(true);
+
+    }
+
+    public void loadConfig() {
+        loadConfig(false);
+    }
+
+    private void loadConfig(boolean isReload) {
+        config = YamlConfiguration.loadConfiguration(file);
+
+        if (isReload)
+            Logger.log("Reloaded config: " + file.getName());
+        else
+            Logger.log("Loaded config: " + file.getName());
     }
 
     private boolean save(FileConfiguration config) {

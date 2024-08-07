@@ -17,10 +17,9 @@ public class RotatingShop extends JavaPlugin {
 
     public static RotatingShop plugin;
 
-    public DataUtils dataFile;
-    private ConfigUtils config;
-
-    public TimerUtils timerUtils;
+    private ConfigUtils configUtils;
+    private DataUtils dataUtils;
+    private TimerUtils timerUtils;
 
     private PlayerPointsHook ppHook;
 
@@ -29,8 +28,8 @@ public class RotatingShop extends JavaPlugin {
 
         plugin = this;
 
-        config = new ConfigUtils(plugin);
-        dataFile = new DataUtils("data.yml");
+        configUtils = new ConfigUtils(plugin);
+        dataUtils = new DataUtils("data.yml");
 
         ppHook = new PlayerPointsHook(plugin);
         if (!ppHook.hook()) {
@@ -38,11 +37,14 @@ public class RotatingShop extends JavaPlugin {
             return;
         }
 
-        timerUtils = new TimerUtils(dataFile);
+        timerUtils = new TimerUtils(dataUtils);
         timerUtils.startTimer();
 
         registerEvents();
+        Logger.log("&aRegistered events.");
+
         registerCommands();
+        Logger.log("&aRegistered commands.");
 
         Logger.log("&aEnabled");
     }
@@ -50,12 +52,25 @@ public class RotatingShop extends JavaPlugin {
     @Override
     public void onDisable() {
         ppHook.unhook();
-        timerUtils.updateServerStoppedTime();
+        timerUtils.stopTimer();
+        timerUtils.updateUptime();
         Logger.log("&cDisabled");
     }
 
     public ConfigUtils getConfigUtils() {
-        return config;
+        return configUtils;
+    }
+
+    public DataUtils getDataUtils() {
+        return dataUtils;
+    }
+
+    public PlayerPointsHook getPlayerPointsHook() {
+        return ppHook;
+    }
+
+    public TimerUtils getTimerUtils() {
+        return timerUtils;
     }
 
     private void registerEvents() {

@@ -1,6 +1,8 @@
 package me.jakepronger.rotatingshop.utils;
 
 import me.jakepronger.rotatingshop.config.ConfigUtils;
+import me.jakepronger.rotatingshop.config.DataUtils;
+import me.jakepronger.rotatingshop.hooks.PlayerPointsHook;
 import org.bukkit.ChatColor;
 
 import java.util.regex.Matcher;
@@ -42,7 +44,18 @@ public class Utils {
         config.reloadConfig();
         config.reloadPerms();
 
-        Logger.log("&eReloaded permissions.");
+        DataUtils data = plugin.getDataUtils();
+        data.reloadConfig();
+
+        PlayerPointsHook ppHook = plugin.getPlayerPointsHook();
+        ppHook.unhook();
+        if (!ppHook.hook()) {
+            plugin.getServer().getPluginManager().disablePlugin(plugin);
+            return 0L;
+        }
+
+        TimerUtils timer = plugin.getTimerUtils();
+        timer.reloadTimer();
 
         return System.currentTimeMillis() - delay;
     }

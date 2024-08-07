@@ -20,6 +20,8 @@ public class ConfigUtils {
 
     public String noPerm;
 
+    public boolean logDebug;
+
     private final JavaPlugin plugin;
 
     public ConfigUtils(JavaPlugin plugin) {
@@ -39,12 +41,12 @@ public class ConfigUtils {
 
     private void loadConfig(boolean reload) {
 
-        boolean newlyCreated = new File(plugin.getDataFolder() + File.separator + "config.yml").exists();
+        boolean configExists = new File(plugin.getDataFolder() + File.separator + "config.yml").exists();
 
         plugin.saveDefaultConfig();
         plugin.reloadConfig();
 
-        if (newlyCreated)
+        if (!configExists)
             Logger.log("&aCreated config.");
         else {
             if (reload)
@@ -76,6 +78,8 @@ public class ConfigUtils {
         useEditorPerm = config.getBoolean("permissions.editor.require", true);
 
         noPerm = config.getString("permissions.no-perm", "&cNo permissions!");
+
+        logDebug = config.getBoolean("log.debug", false);
 
         if (reload)
             Logger.log("&aReloaded permissions.");

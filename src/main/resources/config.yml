@@ -1,3 +1,7 @@
+log:
+  debug: true # <- print out debug logs
+
+# Permission settings
 permissions:
   no-perm: "&cNo permissions!"
   black-market:
@@ -10,6 +14,7 @@ permissions:
     require: true
     node: rs.editor
 
+# Purchase settings
 purchase:
   succeeded:
     message:
@@ -21,24 +26,24 @@ purchase:
   insufficient:
     message:
       use: true
-      message: "&cInsufficient!"
+      message: "&cNot enough points!"
     sound:
       use: true
       sound: ENTITY_EXPERIENCE_ORB_PICKUP
 
 # GUI options
-# open: item-gui, shop.gui (path to gui config section) or 'next' or 'back' for pages?
-
+# open: item.gui, shop.gui (path to gui config section) or 'next' or 'back' for pages?
 shop:
-  rotate-time: 6h
-  item-format:
-    name: "%name%"
-    lore:
-      - "&7Price: &a%formatted-price% %price%" # %price%, %formatted-price%
-      - "&8-> &aLeft click to purchase"
+  items: # purchasable items format (%name%, %lore%, %price%, %formatted-price%)
+    rotation: 360 # in minutes
+    slots: 12,13,14 # Slots to display purchasable items
+    format:
+      name: "%name%"
+      lore:
+        - "%lore%"
+        - "&7Price: &a%formatted-price% %price%"
+        - "&8-> &aLeft click to purchase"
   gui:
-    # todo: locked to only have one type in inventory
-    items: 12,13,14
     name: "Rotating Shop"
     rows: 3
     1,3,5,7,9,11,13,15,17,19,21,23,25:
@@ -53,40 +58,44 @@ shop:
       type: PRISMARINE_SHARD
     26:
       name: "&#FF0000ᴛɪᴍᴇ ʟᴇꜰᴛ"
-      glowing: true
+      glowing: true # enchant the item without showing enchantment flags
       lore:
-        - "&b%time-left%" # todo: variable updates per second?
+        - "&b%time-left%" # any item with %time-left% show the time left until next rotation, updating every second
       type: WRITABLE_BOOK
     18:
       name: "&#FF005Dɪ&#F8006Fᴛ&#F10081ᴇ&#E90093ᴍ&#E200A5ꜱ &#D400C9ʟ&#CC00DBɪ&#C500EDꜱ&#BE00FFᴛ"
       type: BARRIER
-      open: items-gui
-      permission_1:
+      open: items.gui # open another gui on click
+      permission_1: # permission exclusive item
         node: op
         name: "&#FF005Dᴀ&#F9006Dᴅ&#F2007Dᴍ&#EC008Eɪ&#E5009Eɴ &#D800BEᴘ&#D200CEᴀ&#CB00DFɴ&#C500EFᴇ&#BE00FFʟ"
         glowing: true
-        open: items-gui
+        open: items.gui
         type: BARRIER
 
-items-gui: # Items are filed from top to bottom so any empty slots will contain an item
-  # todo: have a background item?
-  # todo: do we dupe the item?
-  name: "ꜱʜᴏᴘ ɪᴛᴇᴍꜱ"
-  rows: 6
-  0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44:
-    name: " "
-    type: LIGHT_GRAY_STAINED_GLASS_PANE
-    items: true
-  45:
-    type: ARROW
-    name: "&#FF0000ʙᴀᴄᴋ"
-    open: back
-  46,47,48,49,50,51,52:
-    name: " "
-    type: BLACK_STAINED_GLASS_PANE
-  53:
-    type: ARROW
-    name: "&#08FB2Cɴᴇxᴛ"
-    open: next
-    #lore:
-    #  - ""
+items:
+  items: # purchasable item format (%name%, %lore%, %price%, %formatted-price%)
+    slots: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44
+    format:
+      name: "%name%"
+      lore:
+        - "%lore%"
+        - "&7Price: &a%formatted-price% %price%" # %price%, %formatted-price%
+        - "&8-> &aLeft click to purchase"
+  gui:
+    name: "ꜱʜᴏᴘ ɪᴛᴇᴍꜱ"
+    rows: 6
+    0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44:
+      name: " "
+      type: LIGHT_GRAY_STAINED_GLASS_PANE
+    45:
+      type: ARROW
+      name: "&#FF0000ʙᴀᴄᴋ"
+      open: back
+    46,47,48,49,50,51,52:
+      name: " "
+      type: BLACK_STAINED_GLASS_PANE
+    53:
+      type: ARROW
+      name: "&#08FB2Cɴᴇxᴛ"
+      open: next
