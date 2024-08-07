@@ -40,9 +40,7 @@ public class Utils {
         Logger.log("&eClosed &f" + InvUtils.closeInventories() + "&e inventories.");
 
         ConfigUtils config = plugin.getConfigUtils();
-
         config.reloadConfig();
-        config.reloadPerms();
 
         DataUtils data = plugin.getDataUtils();
         data.reloadConfig();

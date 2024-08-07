@@ -22,13 +22,15 @@ public class ConfigUtils {
 
     public boolean logDebug;
 
+    public int rotateMinutes;
+
     private final JavaPlugin plugin;
 
     public ConfigUtils(JavaPlugin plugin) {
+
         this.plugin = plugin;
 
         loadConfig();
-        loadPerms();
     }
 
     public void loadConfig() {
@@ -46,26 +48,6 @@ public class ConfigUtils {
         plugin.saveDefaultConfig();
         plugin.reloadConfig();
 
-        if (!configExists)
-            Logger.log("&aCreated config.");
-        else {
-            if (reload)
-                Logger.log("&aReloaded config.");
-            else
-                Logger.log("&aLoaded config.");
-        }
-    }
-
-    public void loadPerms() {
-        loadPerms(false);
-    }
-
-    public void reloadPerms() {
-        loadPerms(true);
-    }
-
-    private void loadPerms(boolean reload) {
-
         FileConfiguration config = plugin.getConfig();
 
         blackmarketPerm = config.getString("permissions.black-market.node", "rs.black-market");
@@ -81,10 +63,16 @@ public class ConfigUtils {
 
         logDebug = config.getBoolean("log.debug", false);
 
-        if (reload)
-            Logger.log("&aReloaded permissions.");
-        else
-            Logger.log("&aLoaded permissions.");
+        rotateMinutes = config.getInt("shop.items.rotation", 360);
+
+        if (!configExists)
+            Logger.log("&aCreated config.");
+        else {
+            if (reload)
+                Logger.log("&aReloaded config.");
+            else
+                Logger.log("&aLoaded config.");
+        }
     }
 
 }

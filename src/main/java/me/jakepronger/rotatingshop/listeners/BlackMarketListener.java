@@ -43,7 +43,7 @@ public class BlackMarketListener implements Listener {
         PersistentDataContainer pData = item.getItemMeta().getPersistentDataContainer();
         String openValue = pData.get(new NamespacedKey(plugin, "open"), PersistentDataType.STRING);
         if (openValue != null
-                && openValue.equalsIgnoreCase("items-gui")) {
+                && openValue.equalsIgnoreCase("items.gui")) {
             BlackMarketItemsGUI.open(p);
         }
     }

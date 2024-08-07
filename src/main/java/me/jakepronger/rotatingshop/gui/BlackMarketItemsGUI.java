@@ -24,7 +24,7 @@ public class BlackMarketItemsGUI {
 
     public static void open(Player p) {
 
-        Inventory inv = InvUtils.loadInventory("items-gui", p);
+        Inventory inv = InvUtils.loadInventory("items.gui", p);
 
         DataUtils data = plugin.getDataUtils();
 
