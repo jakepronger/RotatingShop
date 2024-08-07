@@ -49,7 +49,7 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
         if (args.length == 0) {
 
-            if (config.hasBlackMarketPerm(sender)) {
+            if (!config.hasBlackMarketPerm(sender)) {
                 player.sendMessage(config.getNoPermMessage());
                 return;
             }
@@ -62,7 +62,7 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
             if (args[0].equalsIgnoreCase("reload")) {
 
-                if (config.hasReloadPerm(player)) {
+                if (!config.hasReloadPerm(player)) {
                     player.sendMessage(config.getNoPermMessage());
                     return;
                 }
@@ -74,7 +74,7 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
             } else if (args[0].equalsIgnoreCase("editor")) {
 
-                if (config.hasEditorPerm(sender)) {
+                if (!config.hasEditorPerm(sender)) {
                     player.sendMessage(config.getNoPermMessage());
                     return;
                 }
@@ -91,7 +91,7 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
         } else if (args.length == 2 && args[0].equalsIgnoreCase("add")) {
 
-            if (config.hasEditorPerm(sender)) {
+            if (!config.hasEditorPerm(sender)) {
                 player.sendMessage(config.getNoPermMessage());
                 return;
             }

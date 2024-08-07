@@ -4,6 +4,7 @@ import me.jakepronger.rotatingshop.utils.Logger;
 
 import me.jakepronger.rotatingshop.utils.Utils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
