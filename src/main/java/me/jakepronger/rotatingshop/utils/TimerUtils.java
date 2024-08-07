@@ -51,10 +51,18 @@ public class TimerUtils {
         Logger.log("&aLoaded timer uptime.");
     }
 
+    private void startRotateTimer() {
+
+        //long rotate = plugin.getConfigUtils();
+
+    }
+
     public void startTimer() {
 
         if (!useTimer)
             return;
+
+        startRotateTimer();
 
         taskId = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             updateUptime(true);

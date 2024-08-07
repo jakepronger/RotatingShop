@@ -2,6 +2,9 @@ package me.jakepronger.rotatingshop.config;
 
 import me.jakepronger.rotatingshop.utils.Logger;
 
+import me.jakepronger.rotatingshop.utils.Utils;
+
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -9,18 +12,20 @@ import java.io.File;
 
 public class ConfigUtils {
 
-    public String reloadPerm;
-    public boolean useReloadPerm;
+    private String reloadPerm;
+    private boolean useReloadPerm;
 
-    public String editorPerm;
-    public boolean useEditorPerm;
+    private String editorPerm;
+    private boolean useEditorPerm;
 
-    public String blackmarketPerm;
-    public boolean useBlackMarketPerm;
+    private String blackmarketPerm;
+    private boolean useBlackMarketPerm;
 
-    public String noPerm;
+    private String noPerm;
 
-    public boolean logDebug;
+    private boolean logDebug;
+
+    private int rotateMinutes;
 
     private final JavaPlugin plugin;
 
@@ -46,6 +51,8 @@ public class ConfigUtils {
         plugin.saveDefaultConfig();
         plugin.reloadConfig();
 
+        rotateMinutes = plugin.getConfig().getInt("shop.items.rotation", 360);
+
         if (!configExists)
             Logger.log("&aCreated config.");
         else {
@@ -62,6 +69,26 @@ public class ConfigUtils {
 
     public void reloadPerms() {
         loadPerms(true);
+    }
+
+    public boolean hasBlackMarketPerm(CommandSender s) {
+        return !useBlackMarketPerm || s.hasPermission(blackmarketPerm);
+    }
+
+    public boolean hasReloadPerm(CommandSender s) {
+        return !useReloadPerm || s.hasPermission(reloadPerm);
+    }
+
+    public boolean hasEditorPerm(CommandSender s) {
+        return !useEditorPerm || s.hasPermission(editorPerm);
+    }
+
+    public String getNoPermMessage() {
+        return Utils.format(noPerm);
+    }
+
+    public boolean isLogDebug() {
+        return logDebug;
     }
 
     private void loadPerms(boolean reload) {

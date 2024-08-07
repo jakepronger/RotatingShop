@@ -49,8 +49,8 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
         if (args.length == 0) {
 
-            if (config.useBlackMarketPerm && !player.hasPermission(config.blackmarketPerm)) {
-                player.sendMessage(Utils.format(plugin.getConfigUtils().noPerm));
+            if (config.hasBlackMarketPerm(sender)) {
+                player.sendMessage(config.getNoPermMessage());
                 return;
             }
 
@@ -62,8 +62,8 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
             if (args[0].equalsIgnoreCase("reload")) {
 
-                if (config.useReloadPerm && !player.hasPermission(config.reloadPerm)) {
-                    player.sendMessage(Utils.format(config.noPerm));
+                if (config.hasReloadPerm(player)) {
+                    player.sendMessage(config.getNoPermMessage());
                     return;
                 }
 
@@ -74,8 +74,8 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
             } else if (args[0].equalsIgnoreCase("editor")) {
 
-                if (config.useEditorPerm && !player.hasPermission(config.editorPerm)) {
-                    player.sendMessage(Utils.format(config.noPerm));
+                if (config.hasEditorPerm(sender)) {
+                    player.sendMessage(config.getNoPermMessage());
                     return;
                 }
 
@@ -91,8 +91,8 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
         } else if (args.length == 2 && args[0].equalsIgnoreCase("add")) {
 
-            if (config.useEditorPerm && !player.hasPermission(config.editorPerm)) {
-                player.sendMessage(Utils.format(config.noPerm));
+            if (config.hasEditorPerm(sender)) {
+                player.sendMessage(config.getNoPermMessage());
                 return;
             }
 
@@ -118,12 +118,12 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
             return;
         }
 
-        if (!config.useEditorPerm || player.hasPermission(config.editorPerm)
-                && !config.useReloadPerm || player.hasPermission(config.reloadPerm))
+        if (config.hasEditorPerm(player)
+                && config.hasReloadPerm(player))
             player.sendMessage(Utils.format("&c") + "/" + label + " [editor/add/refresh/reload]");
-        else if (!config.useEditorPerm || player.hasPermission(config.editorPerm))
+        else if (config.hasEditorPerm(player))
             player.sendMessage(Utils.format("&c") + "/" + label + " [editor/add/refresh]");
-        else if (!config.useReloadPerm || player.hasPermission(config.reloadPerm))
+        else if (config.hasReloadPerm(player))
             player.sendMessage(Utils.format("&c") + "/" + label + " [reload]");
         else
             player.sendMessage(Utils.format("&c") + "/" + label); // usage
@@ -141,10 +141,10 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
         if (args.length == 1) {
 
-            if (!config.useReloadPerm || sender.hasPermission(config.reloadPerm))
+            if (config.hasReloadPerm(sender))
                 oneArgList.add("reload");
 
-            if (!config.useEditorPerm || sender.hasPermission(config.editorPerm)) {
+            if (config.hasBlackMarketPerm(sender)) {
                 oneArgList.add("editor");
                 oneArgList.add("add"); // todo: look into adding add function on inventory drag item event..?
                 oneArgList.add("refresh");
@@ -157,7 +157,7 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
         } else if (args.length == 2
                 && args[0].equalsIgnoreCase("add")
-                && !config.useEditorPerm || sender.hasPermission(config.editorPerm)) {
+                && config.hasEditorPerm(sender)) {
 
             // todo: look into tab guidance thing?
             twoArgList.add("1");
