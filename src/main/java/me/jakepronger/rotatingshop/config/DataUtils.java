@@ -28,34 +28,32 @@ public class DataUtils {
     public DataUtils(String fileName) {
 
         filePath = plugin.getDataFolder() + File.separator + fileName;
-
         file = new File(filePath);
-
-        if (!file.exists()) {
-
-            InputStream stream = plugin.getResource(fileName);
-
-            if (stream == null) {
-                Logger.error("Resource not found: " + fileName);
-                return;
-            }
-
-            try {
-                Files.copy(stream, new File(plugin.getDataFolder(), fileName).toPath());
-                Logger.log("&aCreated file: " + fileName);
-            } catch (IOException e) {
-                Logger.error("Error creating DataUtils file: " + e.getMessage());
-                return;
-            }
-        }
 
         loadConfig();
     }
 
+    public boolean isTimerEnabled() {
+        return config.getBoolean("time.uptime-updater.use", true);
+    }
+
+    public int getTimerMinutes() {
+        return config.getInt("time.uptime-updater.minutes", 5);
+    }
+
+    public long getUptime() {
+        return config.getLong("time.uptime", 0);
+    }
+
+    public CompletableFuture<Void> setUptime(long uptime) {
+        return CompletableFuture.runAsync(() -> {
+            config.set("time.uptime", uptime);
+            save(config);
+        });
+    }
+
     public CompletableFuture<Map.Entry<ItemStack, Double>> getItem(int index) {
         return CompletableFuture.supplyAsync(() -> {
-
-            FileConfiguration config = getConfig();
 
             String sectionPath = "data." + index;
             ConfigurationSection section = config.getConfigurationSection(sectionPath);
@@ -73,8 +71,6 @@ public class DataUtils {
 
     public CompletableFuture<ArrayList<Map.Entry<ItemStack, Double>>> getItems() {
         return CompletableFuture.supplyAsync(() -> {
-
-            FileConfiguration config = getConfig();
 
             ArrayList<Map.Entry<ItemStack, Double>> list = new ArrayList<>();
 
@@ -99,8 +95,6 @@ public class DataUtils {
     public CompletableFuture<Boolean> setItemPrice(int index, double price) {
         return CompletableFuture.supplyAsync(() -> {
 
-            FileConfiguration config = getConfig();
-
             String sectionPath = "data." + index;
 
             ConfigurationSection section = config.getConfigurationSection(sectionPath);
@@ -109,14 +103,12 @@ public class DataUtils {
 
             section.set("price", price);
 
-            return true;
+            return save(config);
         });
     }
 
     public CompletableFuture<Boolean> removeItem(int index) {
         return CompletableFuture.supplyAsync(() -> {
-
-            FileConfiguration config = getConfig();
 
             String sectionPath = "data." + index;
 
@@ -135,13 +127,19 @@ public class DataUtils {
                 }
             }
 
+            // update current rotation items
+
+            // todo: if any of rotation items are below index
+            // todo: loop rotation items numbers
+            // todo: if number is above index remove one from number (in current rotation)
+            // todo: if number is index reupdate number in current rotation?
+
             return save(config);
         });
     }
 
     public CompletableFuture<Boolean> addItem(ItemStack item, double price) {
 
-        FileConfiguration config = getConfig();
         int nextId = getNextIndex(config);
 
         return CompletableFuture.supplyAsync(() -> {
@@ -178,12 +176,34 @@ public class DataUtils {
     }
 
     private void loadConfig(boolean isReload) {
+
+        boolean fileExists = file.exists();
+
+        if (!fileExists) {
+
+            InputStream stream = plugin.getResource(file.getName());
+
+            if (stream == null) {
+                Logger.error("Resource not found: " + file.getName());
+                return;
+            }
+
+            try {
+                Files.copy(stream, new File(plugin.getDataFolder(), file.getName()).toPath());
+            } catch (IOException e) {
+                Logger.error("Error creating data.yml file: " + e.getMessage());
+                return;
+            }
+        }
+
         config = YamlConfiguration.loadConfiguration(file);
 
         if (isReload)
-            Logger.log("&aReloaded config: " + file.getName());
+            Logger.log("&aReloaded data.yml file.");
+        else if (!fileExists)
+            Logger.log("&aCreated data.yml file.");
         else
-            Logger.log("&aLoaded config: " + file.getName());
+            Logger.log("&aLoaded data.yml file.");
     }
 
     private boolean save(FileConfiguration config) {
@@ -195,10 +215,14 @@ public class DataUtils {
 
         try {
             config.save(file);
+            Logger.debug("Saved data.yml file.");
         } catch (Exception e) {
             Logger.error(e.getMessage());
             return false;
         }
+
+        this.config = config;
+        Logger.debug("Updated data.yml config.");
 
         return true;
     }

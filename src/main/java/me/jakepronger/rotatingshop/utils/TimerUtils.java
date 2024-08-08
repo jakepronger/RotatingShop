@@ -3,10 +3,8 @@ package me.jakepronger.rotatingshop.utils;
 import me.jakepronger.rotatingshop.config.DataUtils;
 
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 import static me.jakepronger.rotatingshop.RotatingShop.plugin;
 
@@ -20,41 +18,90 @@ public class TimerUtils {
 
     private boolean useTimer;
     private int timerMinutes;
+    private int rotateMinutes;
 
-    private int taskId;
+    private int uptimeTimerId;
+    private int rotateTimerId;
 
     public TimerUtils(DataUtils dataUtils) {
 
         this.dataUtils = dataUtils;
 
-        initiateVars();
-
         START_TIME = System.currentTimeMillis();
+
+        initiateVars();
     }
 
     private void initiateVars() {
 
-        Logger.log("┎ &eLoading timer settings...");
+        UPTIME = dataUtils.getUptime();
+        useTimer = dataUtils.isTimerEnabled();
 
-        useTimer = dataUtils.getConfig().getBoolean("time.uptime-updater.use", true);
+        // if timer minutes is less than one use default value
+        int timerMinutes = dataUtils.getTimerMinutes();
 
-        Logger.log("┃ &fTimer: " + (useTimer ? "&aOn" : "&cOff"));
+        if (dataUtils.getTimerMinutes() < 1)
+            this.timerMinutes = 5;
+        else this.timerMinutes = timerMinutes;
 
-        timerMinutes = dataUtils.getConfig().getInt("time.uptime-updater.minutes", 5);
-        if (timerMinutes < 1)
-            timerMinutes = 5;
+        Logger.log("┎ &eLoaded timer settings");
+        Logger.log("┃ &fTimer: " + (this.useTimer ? "&aOn" : "&cOff"));
+        Logger.log("┃ &fUptime Timer: " + (this.useTimer ? "&a" : "&c") + this.timerMinutes + " minutes");
 
-        Logger.log("┃ &fMinutes: &a" + timerMinutes);
+        int rotateMinutes = plugin.getConfigUtils().getItemRotateMinutes();
 
-        UPTIME = dataUtils.getConfig().getLong("time.uptime", 0L);
+        // if timer minutes is less than one use default value
+        if (rotateMinutes < 1) {
+            this.rotateMinutes = 360;
+        } else this.rotateMinutes = rotateMinutes;
 
-        Logger.log("&aLoaded timer uptime.");
+        Logger.log("┎ &eRotation Info");
+        Logger.log("┃ &fRemaining: &a" + getMinutesLeft() + " minutes");
+        Logger.log("┃ &fRotate every: &a" + rotateMinutes + " minutes");
+        Logger.debug("Uptime: " + UPTIME);
     }
 
-    private void startRotateTimer() {
+    private long getMinutesLeft() {
+        return rotateMinutes - UPTIME;
+    }
 
-        //long rotate = plugin.getConfigUtils();
+    public void startRotateTimer() {
 
+        if (rotateTimerId != 0) {
+            Logger.error("&cRotate timer has already started. Aborting.");
+            return;
+        }
+
+        if (UPTIME >= rotateMinutes) {
+
+            UPTIME = UPTIME - rotateMinutes;
+
+            // update uptime in config
+            dataUtils.setUptime(UPTIME).whenComplete((result, throwable) -> {
+                Logger.debug("Uptime reset to offset in data.yml: " + UPTIME);
+            });
+
+            // todo: rotate items + logs
+        }
+
+        Logger.log("&aStarted rotation timer.");
+
+        rotateTimerId = Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+
+            // todo: rotate items + logs
+
+        }, getMinutesLeft()*(20*60)).getTaskId();
+    }
+
+    public void stopRotateTimer() {
+
+        if (rotateTimerId == 0)
+            return;
+
+        Bukkit.getScheduler().cancelTask(rotateTimerId);
+        rotateTimerId = 0;
+
+        Logger.log("&aStopped rotation timer.");
     }
 
     public void startTimer() {
@@ -62,29 +109,34 @@ public class TimerUtils {
         if (!useTimer)
             return;
 
-        startRotateTimer();
+        if (uptimeTimerId != 0) {
+            Logger.error("&cUptime timer has already started. Aborting.");
+            return;
+        }
 
-        taskId = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+        uptimeTimerId = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             updateUptime(true);
         }, timerMinutes*(20*60), timerMinutes*(20*60)).getTaskId();
 
-        Logger.log("&aTimer has started.");
+        Logger.log("&aUptime timer has started.");
     }
 
     public void stopTimer() {
 
-        if (taskId == 0)
+        if (uptimeTimerId == 0)
             return;
 
-        Bukkit.getScheduler().cancelTask(taskId);
-        taskId = 0;
+        Bukkit.getScheduler().cancelTask(uptimeTimerId);
+        uptimeTimerId = 0;
 
-        Logger.log("&aTimer has stopped.");
+        Logger.log("&aUptime timer has stopped.");
     }
 
     public void reloadTimer() {
+        stopRotateTimer();
         stopTimer();
         initiateVars();
+        startRotateTimer();
         startTimer();
     }
 
@@ -92,15 +144,17 @@ public class TimerUtils {
         return TIMER_CHECK != 0 ? TIMER_CHECK : START_TIME;
     }
 
-    public void updateUptime() {
-        updateUptime(false);
+    public CompletableFuture<Void> updateUptime() {
+        return updateUptime(false);
     }
 
     /**
      *
      * @param timerUpdate true if this is a timer save, otherwise server is shutting down
      */
-    private void updateUptime(boolean timerUpdate) {
+    private CompletableFuture<Void> updateUptime(boolean timerUpdate) {
+
+        CompletableFuture<Void> response = new CompletableFuture<>();
 
         long newUptime;
         if (timerUpdate) {
@@ -111,25 +165,20 @@ public class TimerUtils {
         }
 
         if (newUptime == UPTIME) {
-            Logger.debug("Timer uptime has no difference; returning");
-            return;
+            Logger.debug("Uptime has no significant time difference; returning");
+            response.complete(null);
+            return response;
         }
 
         UPTIME = newUptime;
 
-        // write new timer check and uptime in config
-        FileConfiguration config = dataUtils.getConfig();
-        config.set("time.uptime", UPTIME);
+        // update new uptime in config
+        dataUtils.setUptime(UPTIME).whenComplete((result, throwable) -> {
+            Logger.debug("Updated uptime in data.yml: " + UPTIME);
+            response.complete(null);
+        });
 
-        // save config
-        File dataFile = dataUtils.file;
-        try {
-            config.save(dataFile);
-            Logger.debug("Updated uptime: " + UPTIME);
-        } catch (IOException e) {
-            Logger.error("Issue saving " + dataFile.getName() + ": " + e.getMessage());
-        }
-
+        return response;
     }
 
 }

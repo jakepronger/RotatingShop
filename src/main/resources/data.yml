@@ -4,7 +4,6 @@ time:
     use: true
     minutes: 5
 
-# todo: update these id's if an item is removed
-rotation: 1,3,5
+rotation:
 
 items:

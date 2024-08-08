@@ -38,6 +38,7 @@ public class RotatingShop extends JavaPlugin {
         }
 
         timerUtils = new TimerUtils(dataUtils);
+        timerUtils.startRotateTimer();
         timerUtils.startTimer();
 
         registerEvents();
@@ -51,10 +52,19 @@ public class RotatingShop extends JavaPlugin {
 
     @Override
     public void onDisable() {
+
         ppHook.unhook();
+        timerUtils.stopRotateTimer();
         timerUtils.stopTimer();
-        timerUtils.updateUptime();
-        Logger.log("&cDisabled");
+
+        timerUtils.updateUptime().whenComplete((result, throwable) -> {
+
+            if (throwable != null) {
+                Logger.error("Error updating uptime: " + throwable.getMessage());
+            }
+
+            Logger.log("&cDisabled");
+        });
     }
 
     public ConfigUtils getConfigUtils() {

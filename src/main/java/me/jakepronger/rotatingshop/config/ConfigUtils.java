@@ -1,7 +1,9 @@
 package me.jakepronger.rotatingshop.config;
 
 import me.jakepronger.rotatingshop.utils.Logger;
+import me.jakepronger.rotatingshop.utils.Utils;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -9,28 +11,52 @@ import java.io.File;
 
 public class ConfigUtils {
 
-    public String reloadPerm;
-    public boolean useReloadPerm;
+    private String reloadPerm;
+    private boolean useReloadPerm;
 
-    public String editorPerm;
-    public boolean useEditorPerm;
+    private String editorPerm;
+    private boolean useEditorPerm;
 
-    public String blackmarketPerm;
-    public boolean useBlackMarketPerm;
+    private String blackmarketPerm;
+    private boolean useBlackMarketPerm;
 
-    public String noPerm;
+    private boolean logDebug;
 
-    public boolean logDebug;
-
-    public int rotateMinutes;
+    private String noPerm;
 
     private final JavaPlugin plugin;
+
+    private FileConfiguration config;
 
     public ConfigUtils(JavaPlugin plugin) {
 
         this.plugin = plugin;
 
         loadConfig();
+    }
+
+    public boolean hasReloadPerm(CommandSender s) {
+        return !useReloadPerm || s.hasPermission(reloadPerm);
+    }
+
+    public boolean hasEditorPerm(CommandSender s) {
+        return !useEditorPerm || s.hasPermission(editorPerm);
+    }
+
+    public boolean hasBlackMarketPerm(CommandSender s) {
+        return !useBlackMarketPerm || s.hasPermission(blackmarketPerm);
+    }
+
+    public boolean isLogDebug() {
+        return logDebug;
+    }
+
+    public String getNoPermMessage() {
+        return Utils.format(noPerm);
+    }
+
+    public int getItemRotateMinutes() {
+        return config.getInt("shop.items.rotation", 360);
     }
 
     public void loadConfig() {
@@ -48,7 +74,7 @@ public class ConfigUtils {
         plugin.saveDefaultConfig();
         plugin.reloadConfig();
 
-        FileConfiguration config = plugin.getConfig();
+        config = plugin.getConfig();
 
         blackmarketPerm = config.getString("permissions.black-market.node", "rs.black-market");
         useBlackMarketPerm = config.getBoolean("permissions.black-market.require", true);
@@ -63,15 +89,13 @@ public class ConfigUtils {
 
         logDebug = config.getBoolean("log.debug", false);
 
-        rotateMinutes = config.getInt("shop.items.rotation", 360);
-
         if (!configExists)
-            Logger.log("&aCreated config.");
+            Logger.log("&aCreated plugin config.");
         else {
             if (reload)
-                Logger.log("&aReloaded config.");
+                Logger.log("&aReloaded plugin config.");
             else
-                Logger.log("&aLoaded config.");
+                Logger.log("&aLoaded plugin config.");
         }
     }
 
