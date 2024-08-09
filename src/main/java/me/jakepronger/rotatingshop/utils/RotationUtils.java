@@ -14,7 +14,8 @@ import java.util.concurrent.CompletableFuture;
 public class RotationUtils {
 
     private List<Integer> itemSlots;
-    private HashMap<Integer, Map.Entry<ItemStack, Double>> items;
+    private int totalItemsAmount;
+    private final HashMap<Integer, Map.Entry<ItemStack, Double>> items;
 
     private final DataUtils dataUtils;
     private final ConfigUtils configUtils;
@@ -22,12 +23,13 @@ public class RotationUtils {
     public RotationUtils(DataUtils dataUtils, ConfigUtils configUtils) {
         this.dataUtils = dataUtils;
         this.configUtils = configUtils;
-        itemSlots = new ArrayList<>();
         items = new HashMap<>();
         initiateVars();
     }
 
     private void initiateVars() {
+        // get maximum amount of items
+        totalItemsAmount = dataUtils.getItemsAmount();
         itemSlots = configUtils.getItemSlots();
     }
 
@@ -35,13 +37,15 @@ public class RotationUtils {
 
         CompletableFuture<Void> response = new CompletableFuture<>();
 
-        // get maximum amount of items
-        int totalItemsAmount = dataUtils.getItemsAmount();
-
         // generate itemsAmount random numbers
         List<Integer> numbers = new ArrayList<>();
 
-        for (int i = 0; i < itemSlots.size(); i++) {
+        int loopTimes = itemSlots.size();
+        if (totalItemsAmount < itemSlots.size()) {
+            loopTimes = totalItemsAmount;
+        }
+
+        for (int i = 0; i < loopTimes; i++) {
 
             int randomNumber = (int) (Math.random() * totalItemsAmount) + 1;
 

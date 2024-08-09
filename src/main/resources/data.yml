@@ -4,6 +4,6 @@ time:
     use: true
     minutes: 5
 
-rotation:
+rotation: {}
 
-items:
+items: {}

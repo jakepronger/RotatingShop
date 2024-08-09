@@ -4,6 +4,7 @@ import me.jakepronger.rotatingshop.config.ConfigUtils;
 import me.jakepronger.rotatingshop.config.DataUtils;
 import me.jakepronger.rotatingshop.gui.BlackMarketGUI;
 import me.jakepronger.rotatingshop.gui.BlackMarketItemsGUI;
+import me.jakepronger.rotatingshop.utils.Logger;
 import me.jakepronger.rotatingshop.utils.Utils;
 import me.jakepronger.rotatingshop.utils.command.CommandInfo;
 import me.jakepronger.rotatingshop.utils.command.PluginCommand;
@@ -33,8 +34,16 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
         // console supported
         if (args.length == 1 && args[0].equalsIgnoreCase("reload") && sender.isOp()) {
+
             long delay = Utils.reload();
-            sender.sendMessage(Utils.format("&aReloaded in &f" + delay + "ms&a."));
+            String message = Utils.format("&aReloaded in &f" + delay + "ms&a.");
+
+            Logger.log(message);
+
+            if (sender instanceof Player p) {
+                p.sendMessage(message);
+            }
+
             return;
         }
 

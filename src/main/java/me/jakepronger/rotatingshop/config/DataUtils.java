@@ -85,7 +85,7 @@ public class DataUtils {
     public CompletableFuture<Map.Entry<ItemStack, Double>> getItem(int index) {
         return CompletableFuture.supplyAsync(() -> {
 
-            String sectionPath = "data." + index;
+            String sectionPath = "items." + index;
             ConfigurationSection section = config.getConfigurationSection(sectionPath);
 
             if (section == null) {
@@ -105,7 +105,7 @@ public class DataUtils {
             ArrayList<Map.Entry<ItemStack, Double>> list = new ArrayList<>();
 
             for (int index = 0; true; index++) {
-                String sectionPath = "data." + index;
+                String sectionPath = "items." + index;
                 ConfigurationSection section = config.getConfigurationSection(sectionPath);
 
                 if (section == null) {
@@ -125,7 +125,7 @@ public class DataUtils {
     public CompletableFuture<Boolean> setItemPrice(int index, double price) {
         return CompletableFuture.supplyAsync(() -> {
 
-            String sectionPath = "data." + index;
+            String sectionPath = "items." + index;
 
             ConfigurationSection section = config.getConfigurationSection(sectionPath);
             if (section == null)
@@ -140,7 +140,7 @@ public class DataUtils {
     public CompletableFuture<Boolean> removeItem(int index) {
         return CompletableFuture.supplyAsync(() -> {
 
-            String sectionPath = "data." + index;
+            String sectionPath = "items." + index;
 
             ConfigurationSection section = config.getConfigurationSection(sectionPath);
             if (section == null)
@@ -149,11 +149,11 @@ public class DataUtils {
             config.set(sectionPath, null);
 
             for (int loopId = index; true; loopId++) {
-                ConfigurationSection loopSection = config.getConfigurationSection("data." + loopId);
+                ConfigurationSection loopSection = config.getConfigurationSection("items." + loopId);
                 if (loopSection == null)
                     break;
                 else {
-                    loopSection.set("data." + (loopId - 1), loopId);
+                    loopSection.set("items." + (loopId - 1), loopId);
                 }
             }
 
@@ -174,7 +174,12 @@ public class DataUtils {
 
         return CompletableFuture.supplyAsync(() -> {
 
-            ConfigurationSection section = config.createSection("data." + nextId);
+            ConfigurationSection section = config.getConfigurationSection("items");
+            if (section == null) {
+                section = config.createSection("items");
+            }
+
+            section = section.createSection(String.valueOf(nextId));
 
             section.set("item", ItemSerializer.serializeItemStack(item));
             section.set("price", price);
@@ -185,7 +190,7 @@ public class DataUtils {
 
     private int getNextIndex(FileConfiguration config) {
 
-        ConfigurationSection section = config.getConfigurationSection("data");
+        ConfigurationSection section = config.getConfigurationSection("items");
         if (section == null)
             return 0;
 

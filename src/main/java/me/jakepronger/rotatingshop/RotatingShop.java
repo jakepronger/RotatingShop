@@ -8,6 +8,7 @@ import me.jakepronger.rotatingshop.listeners.BlackMarketListener;
 import me.jakepronger.rotatingshop.config.DataUtils;
 import me.jakepronger.rotatingshop.utils.Logger;
 
+import me.jakepronger.rotatingshop.utils.RotationUtils;
 import me.jakepronger.rotatingshop.utils.TimerUtils;
 
 import org.bukkit.Bukkit;
@@ -19,6 +20,7 @@ public class RotatingShop extends JavaPlugin {
 
     private ConfigUtils configUtils;
     private DataUtils dataUtils;
+    private RotationUtils rotationUtils;
     private TimerUtils timerUtils;
 
     private PlayerPointsHook ppHook;
@@ -36,6 +38,8 @@ public class RotatingShop extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+
+        rotationUtils = new RotationUtils(dataUtils, configUtils);
 
         timerUtils = new TimerUtils(dataUtils);
         timerUtils.startRotateTimer();
