@@ -8,6 +8,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConfigUtils {
 
@@ -57,6 +59,27 @@ public class ConfigUtils {
 
     public int getItemRotateMinutes() {
         return config.getInt("shop.items.rotation", 360);
+    }
+
+    public List<Integer> getItemSlots() {
+
+        List<Integer> itemSlots = new ArrayList<>();
+
+        String[] slots = config.getString("shop.items.slots", "12,13,14").split(",");
+        for (String slot : slots) {
+
+            int slotValue;
+            try {
+                slotValue = Integer.parseInt(slot);
+            } catch (Exception e) {
+                Logger.error("Error parsing int: " + e.getMessage());
+                continue;
+            }
+
+            itemSlots.add(slotValue);
+        }
+
+        return itemSlots;
     }
 
     public void loadConfig() {

@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -43,6 +44,35 @@ public class DataUtils {
 
     public long getUptime() {
         return config.getLong("time.uptime", 0);
+    }
+
+    public int getItemsAmount() {
+
+        int amount = 0;
+
+        ConfigurationSection section = config.getConfigurationSection("items");
+        if (section != null) {
+            amount = section.getKeys(false).size();
+        }
+
+        return amount;
+    }
+
+    public CompletableFuture<Void> setRotationInts(List<Integer> intList) {
+        return CompletableFuture.supplyAsync(() -> {
+
+            List<String> list = new ArrayList<>();
+            for (int i : intList) {
+                list.add(String.valueOf(i));
+            }
+
+            String value = String.join(",", list);
+            config.set("rotation", value);
+
+            save(config);
+
+            return null;
+        });
     }
 
     public CompletableFuture<Void> setUptime(long uptime) {
@@ -129,7 +159,7 @@ public class DataUtils {
 
             // update current rotation items
 
-            // todo: if any of rotation items are below index
+            // todo: if any of rotation items are above index
             // todo: loop rotation items numbers
             // todo: if number is above index remove one from number (in current rotation)
             // todo: if number is index reupdate number in current rotation?
