@@ -4,6 +4,8 @@ import me.jakepronger.rotatingshop.config.ConfigUtils;
 import me.jakepronger.rotatingshop.config.DataUtils;
 import me.jakepronger.rotatingshop.hooks.PlayerPointsHook;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,6 +13,13 @@ import java.util.regex.Pattern;
 import static me.jakepronger.rotatingshop.RotatingShop.plugin;
 
 public class Utils {
+
+    public static boolean canFit(Player p, ItemStack item) {
+
+
+
+        return false;
+    }
 
     public static String format(String message) {
 
@@ -30,6 +39,10 @@ public class Utils {
         matcher.appendTail(sb);
 
         return ChatColor.translateAlternateColorCodes('&', sb.toString());
+    }
+
+    public static net.md_5.bungee.api.ChatColor getColorFromHex(String hex) {
+        return net.md_5.bungee.api.ChatColor.of(hex.toLowerCase());
     }
 
     public static long reload() {
@@ -56,10 +69,6 @@ public class Utils {
         timer.reloadTimer();
 
         return System.currentTimeMillis() - delay;
-    }
-
-    public static net.md_5.bungee.api.ChatColor getColorFromHex(String hex) {
-        return net.md_5.bungee.api.ChatColor.of(hex.toLowerCase());
     }
 
 }
