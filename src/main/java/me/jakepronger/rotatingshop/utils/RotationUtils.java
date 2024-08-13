@@ -37,6 +37,8 @@ public class RotationUtils {
 
         CompletableFuture<Void> response = new CompletableFuture<>();
 
+        // todo: put into async thread
+
         // generate itemsAmount random numbers
         List<Integer> numbers = new ArrayList<>();
 

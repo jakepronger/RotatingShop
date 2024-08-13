@@ -197,13 +197,8 @@ public class DataUtils {
         return section.getKeys(false).size();
     }
 
-    public FileConfiguration getConfig() {
-        return config;
-    }
-
     public void reloadConfig() {
         loadConfig(true);
-
     }
 
     public void loadConfig() {
