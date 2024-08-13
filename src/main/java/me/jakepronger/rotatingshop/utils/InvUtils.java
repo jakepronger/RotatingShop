@@ -99,6 +99,8 @@ public class InvUtils {
         // Player p: for permission checks
         // path: shop.gui
 
+
+        // todo: don't do this use already loaded config
         FileConfiguration config = plugin.getConfig();
 
         ConfigurationSection cs = config.getConfigurationSection(configSection);
