@@ -13,8 +13,6 @@ import java.util.concurrent.CompletableFuture;
 
 public class RotationUtils {
 
-    private List<Integer> itemSlots;
-    private int totalItemsAmount;
     private final HashMap<Integer, Map.Entry<ItemStack, Double>> items;
 
     private final DataUtils dataUtils;
@@ -23,53 +21,58 @@ public class RotationUtils {
     public RotationUtils(DataUtils dataUtils, ConfigUtils configUtils) {
         this.dataUtils = dataUtils;
         this.configUtils = configUtils;
+
         items = new HashMap<>();
-        initiateVars();
+
+        initiateItems();
     }
 
-    private void initiateVars() {
-        // get maximum amount of items
-        totalItemsAmount = dataUtils.getItemsAmount();
-        itemSlots = configUtils.getItemSlots();
+    private void initiateItems() {
+
     }
 
     public CompletableFuture<Void> rotateItems() {
 
         CompletableFuture<Void> response = new CompletableFuture<>();
 
-        // todo: put into async thread
+        CompletableFuture.runAsync(() -> {
 
-        // generate itemsAmount random numbers
-        List<Integer> numbers = new ArrayList<>();
+            // generate itemsAmount random numbers
+            List<Integer> numbers = new ArrayList<>();
 
-        int loopTimes = itemSlots.size();
-        if (totalItemsAmount < itemSlots.size()) {
-            loopTimes = totalItemsAmount;
-        }
+            int loopTimes = configUtils.getItemSlots().size();
 
-        for (int i = 0; i < loopTimes; i++) {
-
-            int randomNumber = (int) (Math.random() * totalItemsAmount) + 1;
-
-            while (numbers.contains(randomNumber)) {
-                randomNumber = (int) (Math.random() * totalItemsAmount) + 1;
+            // if total amount of available items is less than the provided slots to show items
+            // use total amount of available items instead
+            if (dataUtils.getItemsAmount() < loopTimes) {
+                loopTimes = dataUtils.getItemsAmount();
             }
 
-            numbers.add(randomNumber);
-        }
+            for (int i = 1; i <= loopTimes; i++) {
 
-        items.clear();
+                int randomNumber = (int) (Math.random() * dataUtils.getItemsAmount()) + 1;
 
-        List<CompletableFuture<Map.Entry<ItemStack, Double>>> futures = new ArrayList<>();
+                if (numbers.contains(randomNumber)) {
+                    i--;
+                    continue;
+                }
 
-        // set items
-        for (int num : numbers) {
-            futures.add(dataUtils.getItem(num).whenComplete((entry, throwable) ->
-                    items.put(num, entry)));
-        }
+                numbers.add(randomNumber);
+            }
 
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).whenComplete((aVoid, throwable) -> {
-            response.complete(null);
+            items.clear();
+
+            List<CompletableFuture<Map.Entry<ItemStack, Double>>> futures = new ArrayList<>();
+
+            // set items
+            for (int num : numbers) {
+                futures.add(dataUtils.getItem(num).whenComplete((entry, throwable) ->
+                        items.put(num, entry)));
+            }
+
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).whenComplete((aVoid, throwable) -> {
+                response.complete(null);
+            });
         });
 
         return response;

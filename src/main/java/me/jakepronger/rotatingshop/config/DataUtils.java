@@ -160,7 +160,9 @@ public class DataUtils {
             // update current rotation items
 
             // todo: if any of rotation items are above index
+
             // todo: loop rotation items numbers
+            //for (int id : )
             // todo: if number is above index remove one from number (in current rotation)
             // todo: if number is index reupdate number in current rotation?
 
