@@ -21,15 +21,17 @@ import static me.jakepronger.rotatingshop.RotatingShop.plugin;
 
 public class DataUtils {
 
-    public final String filePath;
-    public final File file;
+    private final List<Integer> rotationInts;
 
+    private final File file;
     private FileConfiguration config;
 
     public DataUtils(String fileName) {
 
-        filePath = plugin.getDataFolder() + File.separator + fileName;
+        String filePath = plugin.getDataFolder() + File.separator + fileName;
         file = new File(filePath);
+
+        rotationInts = new ArrayList<>();
 
         loadConfig();
     }
@@ -58,16 +60,41 @@ public class DataUtils {
         return amount;
     }
 
+    public List<Integer> getRotationInts() {
+        return rotationInts;
+    }
+
+    private void loadRotationInts() {
+
+        String value = config.getString("rotation", "");
+        if (value.isEmpty())
+            return;
+
+        for (String loopValue : value.split(",")) {
+
+            int number;
+            try {
+                number = Integer.parseInt(loopValue);
+            } catch (Exception e) {
+                Logger.error("Error parsing int: " + e.getMessage());
+                continue;
+            }
+
+            rotationInts.add(number);
+        }
+    }
+
     public CompletableFuture<Void> setRotationInts(List<Integer> intList) {
         return CompletableFuture.supplyAsync(() -> {
 
-            List<String> list = new ArrayList<>();
+            StringBuilder builder = new StringBuilder();
             for (int i : intList) {
-                list.add(String.valueOf(i));
+                if (builder.isEmpty())
+                    builder.append(i);
+                else builder.append(",").append(i);
             }
 
-            String value = String.join(",", list);
-            config.set("rotation", value);
+            config.set("rotation", builder.toString());
 
             save(config);
 
@@ -229,6 +256,8 @@ public class DataUtils {
         }
 
         config = YamlConfiguration.loadConfiguration(file);
+
+        loadRotationInts();
 
         if (isReload)
             Logger.log("&aReloaded data.yml file.");

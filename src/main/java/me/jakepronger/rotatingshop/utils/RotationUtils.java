@@ -13,6 +13,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class RotationUtils {
 
+    // todo: add logs
+
     private final HashMap<Integer, Map.Entry<ItemStack, Double>> items;
 
     private final DataUtils dataUtils;
@@ -27,8 +29,14 @@ public class RotationUtils {
         initiateItems();
     }
 
-    private void initiateItems() {
+    private CompletableFuture<Void> initiateItems() {
 
+        List<Integer> numbers = dataUtils.getRotationInts();
+        if (numbers.isEmpty()) {
+            return rotateItems();
+        }
+
+        return loadItems(numbers);
     }
 
     public CompletableFuture<Void> rotateItems() {
@@ -36,6 +44,21 @@ public class RotationUtils {
         CompletableFuture<Void> response = new CompletableFuture<>();
 
         CompletableFuture.runAsync(() -> {
+            getNewNumbers().whenComplete((numbers, throwable) -> {
+                dataUtils.setRotationInts(numbers).whenComplete((result, throwable1) -> {
+                    // item loading
+                    loadItems(numbers).whenComplete((value, throwable2) -> {
+                        response.complete(null);
+                    });
+                });
+            });
+        });
+
+        return response;
+    }
+
+    private CompletableFuture<List<Integer>> getNewNumbers() {
+        return CompletableFuture.supplyAsync(() -> {
 
             // generate itemsAmount random numbers
             List<Integer> numbers = new ArrayList<>();
@@ -60,6 +83,15 @@ public class RotationUtils {
                 numbers.add(randomNumber);
             }
 
+            return numbers;
+        });
+    }
+
+    private CompletableFuture<Void> loadItems(List<Integer> numbers) {
+
+        CompletableFuture<Void> response = new CompletableFuture<>();
+
+        CompletableFuture.runAsync(() -> {
             items.clear();
 
             List<CompletableFuture<Map.Entry<ItemStack, Double>>> futures = new ArrayList<>();
@@ -70,7 +102,7 @@ public class RotationUtils {
                         items.put(num, entry)));
             }
 
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).whenComplete((aVoid, throwable) -> {
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).whenComplete((avoid, throwable) -> {
                 response.complete(null);
             });
         });
@@ -79,7 +111,7 @@ public class RotationUtils {
     }
 
     public void reload() {
-
+        initiateItems();
     }
 
 }
