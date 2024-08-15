@@ -164,7 +164,15 @@ public class TimerUtils {
             newUptime = UPTIME + ((System.currentTimeMillis() - getLastUpdated()) / 1000 / 60);
         }
 
-        if (newUptime == UPTIME) {
+        boolean rotateRequired;
+        if (newUptime >= rotateMinutes) {
+            newUptime = newUptime - rotateMinutes;
+            rotateRequired = true;
+        } else {
+            rotateRequired = false;
+        }
+
+        if (UPTIME == newUptime && !rotateRequired) {
             Logger.debug("Uptime has no significant time difference; returning");
             response.complete(null);
             return response;
@@ -174,7 +182,13 @@ public class TimerUtils {
 
         // update new uptime in config
         dataUtils.setUptime(UPTIME).whenComplete((result, throwable) -> {
+
             Logger.debug("Updated uptime in data.yml: " + UPTIME);
+
+            if (rotateRequired) {
+                // todo: rotate items + logs
+            }
+
             response.complete(null);
         });
 
