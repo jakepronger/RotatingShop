@@ -21,6 +21,7 @@ public class BlackMarketGUI {
         if (inv == null) {
             p.sendMessage(Utils.format("&cFailed to load inventory!"));
             Logger.error("");
+            // todo: ^
             return;
         }
 

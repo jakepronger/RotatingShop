@@ -3,6 +3,7 @@ package me.jakepronger.rotatingshop.config;
 import me.jakepronger.rotatingshop.utils.ItemSerializer;
 import me.jakepronger.rotatingshop.utils.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -131,7 +132,7 @@ public class DataUtils {
 
             ArrayList<Map.Entry<ItemStack, Double>> list = new ArrayList<>();
 
-            for (int index = 0; true; index++) {
+            for (int index = 1; true; index++) {
                 String sectionPath = "items." + index;
                 ConfigurationSection section = config.getConfigurationSection(sectionPath);
 
@@ -167,22 +168,47 @@ public class DataUtils {
     public CompletableFuture<Boolean> removeItem(int index) {
         return CompletableFuture.supplyAsync(() -> {
 
-            String sectionPath = "items." + index;
+            Bukkit.broadcastMessage("debug 1");
 
-            ConfigurationSection section = config.getConfigurationSection(sectionPath);
-            if (section == null)
+            ConfigurationSection itemSection = config.getConfigurationSection("items");
+            if (itemSection == null)
                 return false;
 
-            config.set(sectionPath, null);
+            Bukkit.broadcastMessage("debug 2");
 
-            for (int loopId = index; true; loopId++) {
+            ConfigurationSection indexSection = itemSection.getConfigurationSection(String.valueOf(index));
+            if (indexSection == null)
+                return false;
+
+            int keys = itemSection.getKeys(false).size();
+
+            Bukkit.broadcastMessage("debug 3");
+            config.set("items." + index, null);
+
+            Bukkit.broadcastMessage("debug 4");
+
+            for (int loopId = index+1; true; loopId++) {
+
                 ConfigurationSection loopSection = config.getConfigurationSection("items." + loopId);
-                if (loopSection == null)
+
+                if (loopSection == null) {
+                    Bukkit.broadcastMessage("loopSection null returning '" + "items." + loopId + "'");
                     break;
-                else {
-                    loopSection.set("items." + (loopId - 1), loopId);
+                } else {
+                    if (loopId >= keys) {
+                        config.set("items." + loopId, null);
+                        Bukkit.broadcastMessage("last key set null; break loop");
+                        break;
+                    } else {
+                        //loopSection.set("items." + (loopId - 1), loopId);
+                        Bukkit.broadcastMessage("updated items '" + (loopId) + "' to use id " + (loopId-1));
+                        config.set("items." + (loopId-1), loopSection);
+                    }
                 }
+
             }
+
+            Bukkit.broadcastMessage("debug 4");
 
             // update current rotation items
 
@@ -221,9 +247,13 @@ public class DataUtils {
 
         ConfigurationSection section = config.getConfigurationSection("items");
         if (section == null)
-            return 0;
+            return 1;
 
-        return section.getKeys(false).size();
+        int size = section.getKeys(false).size();
+        if (size == 0)
+            return 1;
+
+        return size + 1;
     }
 
     public void reloadConfig() {

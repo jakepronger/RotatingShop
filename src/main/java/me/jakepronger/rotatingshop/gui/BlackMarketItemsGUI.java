@@ -30,13 +30,16 @@ public class BlackMarketItemsGUI {
 
         data.getItems().whenComplete((items, throwable) -> {
 
-            for (int i = 0; true; i++) {
+            for (int i = 1; true; i++) {
 
-                if (i >= items.size()) {
+                if (i > items.size()) {
                     break;
                 }
 
-                Map.Entry<ItemStack, Double> entry = items.get(i);
+                Map.Entry<ItemStack, Double> entry = items.get(i-1);
+                if (entry == null) {
+                    break;
+                }
 
                 double price = entry.getValue();
 
@@ -45,12 +48,13 @@ public class BlackMarketItemsGUI {
 
                 PersistentDataContainer pData = meta.getPersistentDataContainer();
                 pData.set(new NamespacedKey(plugin, "price"), PersistentDataType.DOUBLE, price);
+                pData.set(new NamespacedKey(plugin, "index"), PersistentDataType.INTEGER, i);
 
-                meta.setDisplayName(Utils.format("&aprice: " + price));
+                meta.setDisplayName(Utils.format("&a") + "price: " + price + " index: " + i);
 
                 item.setItemMeta(meta);
 
-                inv.setItem(i, item);
+                inv.setItem(i-1, item);
             }
 
             Bukkit.getScheduler().runTask(plugin, () -> {
