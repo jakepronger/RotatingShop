@@ -168,47 +168,33 @@ public class DataUtils {
     public CompletableFuture<Boolean> removeItem(int index) {
         return CompletableFuture.supplyAsync(() -> {
 
-            Bukkit.broadcastMessage("debug 1");
-
             ConfigurationSection itemSection = config.getConfigurationSection("items");
             if (itemSection == null)
                 return false;
-
-            Bukkit.broadcastMessage("debug 2");
 
             ConfigurationSection indexSection = itemSection.getConfigurationSection(String.valueOf(index));
             if (indexSection == null)
                 return false;
 
-            int keys = itemSection.getKeys(false).size();
-
-            Bukkit.broadcastMessage("debug 3");
             config.set("items." + index, null);
-
-            Bukkit.broadcastMessage("debug 4");
 
             for (int loopId = index+1; true; loopId++) {
 
                 ConfigurationSection loopSection = config.getConfigurationSection("items." + loopId);
 
                 if (loopSection == null) {
-                    Bukkit.broadcastMessage("loopSection null returning '" + "items." + loopId + "'");
+                    itemSection.set(String.valueOf(loopId-1), null);
+                    //Bukkit.broadcastMessage("last key '" + loopId + "' set null; break loop");
+                    //Bukkit.broadcastMessage("loopSection null returning '" + "items." + loopId + "'");
                     break;
                 } else {
-                    if (loopId >= keys) {
-                        config.set("items." + loopId, null);
-                        Bukkit.broadcastMessage("last key set null; break loop");
-                        break;
-                    } else {
-                        //loopSection.set("items." + (loopId - 1), loopId);
-                        Bukkit.broadcastMessage("updated items '" + (loopId) + "' to use id " + (loopId-1));
-                        config.set("items." + (loopId-1), loopSection);
-                    }
+                    itemSection.set(String.valueOf((loopId - 1)), loopSection);
+                    //Bukkit.broadcastMessage("updated item '" + (loopId) + "' to use id " + (loopId-1));
                 }
 
             }
 
-            Bukkit.broadcastMessage("debug 4");
+            //Bukkit.broadcastMessage("debug 4");
 
             // update current rotation items
 
