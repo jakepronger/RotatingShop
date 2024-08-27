@@ -9,6 +9,7 @@ import me.jakepronger.rotatingshop.utils.Utils;
 import me.jakepronger.rotatingshop.utils.command.CommandInfo;
 import me.jakepronger.rotatingshop.utils.command.PluginCommand;
 
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -116,6 +117,11 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
             // get main hand item
             ItemStack item = player.getInventory().getItemInMainHand();
+
+            if (item.getType() == Material.AIR) {
+                player.sendMessage(Utils.format("&cNo item in main hand."));
+                return;
+            }
 
             DataUtils data = plugin.getDataUtils();
 

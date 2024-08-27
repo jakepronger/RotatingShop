@@ -45,8 +45,8 @@ public class TimerUtils {
         else this.timerMinutes = timerMinutes;
 
         Logger.log("┎ &eLoaded timer settings");
-        Logger.log("┃ &fTimer: " + (this.useTimer ? "&aOn" : "&cOff"));
-        Logger.log("┃ &fUptime Timer: " + (this.useTimer ? "&a" : "&c") + this.timerMinutes + " minutes");
+        Logger.log("┃ &fUptime Timer: " + (this.useTimer ? "&aOn" : "&cOff"));
+        Logger.log("┃ &fDuration: " + (this.useTimer ? "&a" : "&c") + this.timerMinutes + " minutes");
 
         int rotateMinutes = plugin.getConfigUtils().getItemRotateMinutes();
 
@@ -55,7 +55,7 @@ public class TimerUtils {
             this.rotateMinutes = 360;
         } else this.rotateMinutes = rotateMinutes;
 
-        Logger.log("┎ &eRotation Info");
+        Logger.log("┎ &eCurrent Rotation");
         Logger.log("┃ &fRemaining: &a" + getMinutesLeft() + " minutes");
         Logger.log("┃ &fRotate every: &a" + rotateMinutes + " minutes");
         Logger.debug("Uptime: " + UPTIME);
