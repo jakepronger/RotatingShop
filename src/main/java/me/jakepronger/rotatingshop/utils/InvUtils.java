@@ -57,6 +57,50 @@ public class InvUtils {
         return inv;
     }
 
+    public static ItemStack loadItem(ConfigurationSection cs) {
+
+        ItemStack item;
+        ItemMeta meta;
+        PersistentDataContainer pData;
+
+        Material type;
+        try {
+            type = Material.valueOf(cs.getString("type"));
+        } catch (Exception e) {
+            return null;
+        }
+
+        item = new ItemStack(type);
+        meta = item.getItemMeta();
+        pData = meta.getPersistentDataContainer();
+
+        String itemName = cs.getString(".name");
+        if (itemName != null) {
+            meta.setDisplayName(Utils.format("&f" + itemName));
+        }
+
+        boolean glowing = cs.getBoolean("glowing", false);
+        if (glowing) {
+            meta.addEnchant(Enchantment.DURABILITY, 1, true);
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        }
+
+        List<String> loreList = cs.getStringList("lore");
+        if (!loreList.isEmpty()) {
+            loreList.replaceAll(lore -> Utils.format("&f" + lore));
+            meta.setLore(loreList);
+        }
+
+        String openInventory = cs.getString("open");
+        if (openInventory != null) {
+            pData.set(new NamespacedKey(plugin, "open"), PersistentDataType.STRING, openInventory);
+        }
+
+        item.setItemMeta(meta);
+
+        return item;
+    }
+
     public static int closeInventories() {
 
         int bmGuiSize = BlackMarketGUI.openInventories.size();
@@ -94,11 +138,31 @@ public class InvUtils {
         return list;
     }
 
+    /**
+     * Load the shop inventory
+     * @param p for permission checks
+     * @return the loaded inventory
+     */
+    private static Inventory shopInventory;
+    public static Inventory loadShop(Player p) {
+        if (shopInventory != null)
+            return shopInventory;
+    }
+
+    /**
+     *
+     * @param page
+     * @return
+     */
+    public static Inventory loadEditor(int page) {
+
+    }
+
     public static Inventory loadInventory(String configSection, Player p) {
 
         // Player p: for permission checks
         // path: shop.gui
-        
+
         // todo: don't do this use already loaded config
         FileConfiguration config = plugin.getConfig();
 
@@ -174,50 +238,6 @@ public class InvUtils {
         }
 
         return inv;
-    }
-
-    public static ItemStack loadItem(ConfigurationSection cs) {
-
-        ItemStack item;
-        ItemMeta meta;
-        PersistentDataContainer pData;
-
-        Material type;
-        try {
-            type = Material.valueOf(cs.getString("type"));
-        } catch (Exception e) {
-            return null;
-        }
-
-        item = new ItemStack(type);
-        meta = item.getItemMeta();
-        pData = meta.getPersistentDataContainer();
-
-        String itemName = cs.getString(".name");
-        if (itemName != null) {
-            meta.setDisplayName(Utils.format("&f" + itemName));
-        }
-
-        boolean glowing = cs.getBoolean("glowing", false);
-        if (glowing) {
-            meta.addEnchant(Enchantment.DURABILITY, 1, true);
-            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        }
-
-        List<String> loreList = cs.getStringList("lore");
-        if (!loreList.isEmpty()) {
-            loreList.replaceAll(lore -> Utils.format("&f" + lore));
-            meta.setLore(loreList);
-        }
-
-        String openInventory = cs.getString("open");
-        if (openInventory != null) {
-            pData.set(new NamespacedKey(plugin, "open"), PersistentDataType.STRING, openInventory);
-        }
-
-        item.setItemMeta(meta);
-
-        return item;
     }
 
 }
