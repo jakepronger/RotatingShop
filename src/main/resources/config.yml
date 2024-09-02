@@ -65,12 +65,12 @@ shop:
     18:
       name: "&#FF005Dɪ&#F8006Fᴛ&#F10081ᴇ&#E90093ᴍ&#E200A5ꜱ &#D400C9ʟ&#CC00DBɪ&#C500EDꜱ&#BE00FFᴛ"
       type: BARRIER
-      open: items.gui # open another gui on click
+      open: editor.gui # open another gui on click
       permission_1: # permission exclusive item
         node: op
         name: "&#FF005Dᴀ&#F9006Dᴅ&#F2007Dᴍ&#EC008Eɪ&#E5009Eɴ &#D800BEᴘ&#D200CEᴀ&#CB00DFɴ&#C500EFᴇ&#BE00FFʟ"
         glowing: true
-        open: items.gui
+        open: editor.gui
         type: BARRIER
 
 items:

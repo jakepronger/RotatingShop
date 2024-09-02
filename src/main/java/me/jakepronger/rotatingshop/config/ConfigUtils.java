@@ -15,14 +15,17 @@ public class ConfigUtils {
 
     private final JavaPlugin plugin;
 
-    private final List<Integer> itemSlots;
+    private final List<Integer> shopItemSlots;
+    private final List<Integer> editorItemSlots;
 
     private FileConfiguration config;
 
     public ConfigUtils(JavaPlugin plugin) {
 
         this.plugin = plugin;
-        this.itemSlots = new ArrayList<>();
+
+        this.shopItemSlots = new ArrayList<>();
+        this.editorItemSlots = new ArrayList<>();
 
         loadConfig();
     }
@@ -51,11 +54,55 @@ public class ConfigUtils {
     }
 
     public int getItemRotateMinutes() {
-        return config.getInt("shop.items.rotation", 360);
+        return config.getInt("shop.items.rotation", 360) / 60;
     }
 
-    public List<Integer> getItemSlots() {
-        return itemSlots;
+    public List<Integer> getShopItemSlots() {
+        return shopItemSlots;
+    }
+
+    private void loadShopItemSlots() {
+
+        shopItemSlots.clear();
+
+        String[] slots = config.getString("shop.items.slots", "12,13,14").split(",");
+
+        for (String slot : slots) {
+            int slotValue;
+            try {
+                slotValue = Integer.parseInt(slot);
+            } catch (Exception e) {
+                Logger.error("Error parsing int: " + e.getMessage());
+                continue;
+            }
+
+            shopItemSlots.add(slotValue);
+        }
+
+    }
+
+    public List<Integer> getEditorItemSlots() {
+        return editorItemSlots;
+    }
+
+    private void loadEditorItemSlots() {
+
+        editorItemSlots.clear();
+
+        String[] slots = config.getString("editor.items.slots", "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44").split(",");
+
+        for (String slot : slots) {
+            int slotValue;
+            try {
+                slotValue = Integer.parseInt(slot);
+            } catch (Exception e) {
+                Logger.error("Error parsing int: " + e.getMessage());
+                continue;
+            }
+
+            editorItemSlots.add(slotValue);
+        }
+
     }
 
     public void loadConfig() {
@@ -75,7 +122,8 @@ public class ConfigUtils {
 
         config = plugin.getConfig();
 
-        loadItemSlots();
+        loadShopItemSlots();
+        loadEditorItemSlots();
 
         if (isReload)
             Logger.log("&aReloaded plugin config.");
@@ -83,26 +131,6 @@ public class ConfigUtils {
             Logger.log("&aCreated plugin config.");
         else
             Logger.log("&aLoaded plugin config.");
-    }
-
-    private void loadItemSlots() {
-
-        itemSlots.clear();
-
-        String[] slots = config.getString("shop.items.slots", "12,13,14").split(",");
-
-        for (String slot : slots) {
-            int slotValue;
-            try {
-                slotValue = Integer.parseInt(slot);
-            } catch (Exception e) {
-                Logger.error("Error parsing int: " + e.getMessage());
-                continue;
-            }
-
-            itemSlots.add(slotValue);
-        }
-
     }
 
 }

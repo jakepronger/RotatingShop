@@ -3,7 +3,6 @@ package me.jakepronger.rotatingshop.config;
 import me.jakepronger.rotatingshop.utils.ItemSerializer;
 import me.jakepronger.rotatingshop.utils.Logger;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;

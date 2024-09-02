@@ -63,7 +63,7 @@ public class RotationUtils {
             // generate itemsAmount random numbers
             List<Integer> numbers = new ArrayList<>();
 
-            int loopTimes = configUtils.getItemSlots().size();
+            int loopTimes = configUtils.getShopItemSlots().size();
 
             // if total amount of available items is less than the provided slots to show items
             // use total amount of available items instead

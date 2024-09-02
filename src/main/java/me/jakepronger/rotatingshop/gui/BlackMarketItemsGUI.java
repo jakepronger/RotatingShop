@@ -15,6 +15,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static me.jakepronger.rotatingshop.RotatingShop.plugin;
@@ -25,12 +26,10 @@ public class BlackMarketItemsGUI {
 
     public static void open(Player p) {
 
-        Inventory inv = InvUtils.loadInventory("items.gui", p);
+        Inventory inv = InvUtils.loadInventory("editor.gui", p);
 
         if (inv == null) {
             p.sendMessage(Utils.format("&cFailed to load inventory!"));
-            Logger.error("");
-            // todo: ^
             return;
         }
 
@@ -58,7 +57,12 @@ public class BlackMarketItemsGUI {
                 pData.set(new NamespacedKey(plugin, "price"), PersistentDataType.DOUBLE, price);
                 pData.set(new NamespacedKey(plugin, "index"), PersistentDataType.INTEGER, i);
 
-                meta.setDisplayName(Utils.format("&a") + "price: " + price + " index: " + i);
+                List<String> lore = meta.getLore();
+                lore.add(Utils.format("&8----------"));
+                lore.add(Utils.format("&7Price: &a" + price));
+                lore.add(Utils.format("&7Index: &a" + i));
+
+                meta.setLore(lore);
 
                 item.setItemMeta(meta);
 

@@ -2,7 +2,6 @@ package me.jakepronger.rotatingshop.gui;
 
 import me.jakepronger.rotatingshop.utils.InvUtils;
 
-import me.jakepronger.rotatingshop.utils.Logger;
 import me.jakepronger.rotatingshop.utils.Utils;
 
 import org.bukkit.entity.Player;
@@ -20,8 +19,6 @@ public class BlackMarketGUI {
 
         if (inv == null) {
             p.sendMessage(Utils.format("&cFailed to load inventory!"));
-            Logger.error("");
-            // todo: ^
             return;
         }
 

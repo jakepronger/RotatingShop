@@ -4,6 +4,7 @@ import me.jakepronger.rotatingshop.gui.BlackMarketGUI;
 import me.jakepronger.rotatingshop.gui.BlackMarketItemsGUI;
 
 import me.jakepronger.rotatingshop.utils.Utils;
+
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -14,8 +15,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.Optional;
 
 import static me.jakepronger.rotatingshop.RotatingShop.plugin;
 
