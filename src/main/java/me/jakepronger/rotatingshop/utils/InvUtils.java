@@ -138,26 +138,6 @@ public class InvUtils {
         return list;
     }
 
-    /**
-     * Load the shop inventory
-     * @param p for permission checks
-     * @return the loaded inventory
-     */
-    private static Inventory shopInventory;
-    public static Inventory loadShop(Player p) {
-        if (shopInventory != null)
-            return shopInventory;
-    }
-
-    /**
-     *
-     * @param page
-     * @return
-     */
-    public static Inventory loadEditor(int page) {
-
-    }
-
     public static Inventory loadInventory(String configSection, Player p) {
 
         // Player p: for permission checks
@@ -175,7 +155,7 @@ public class InvUtils {
         // inventory properties
 
         int rows = cs.getInt("rows", 3);
-        String name = cs.getString("name", "Rotating Shop");
+        String name = cs.getString("name", "");
 
         Inventory inv;
         try {

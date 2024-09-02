@@ -82,15 +82,23 @@ public class TimerUtils {
             });
 
             // todo: rotate items + logs
+            plugin.getRotationUtils().rotateItems().whenComplete((value, throwable) -> {
+                Logger.log("&d&lDEBUG rotationCalled");
+            });
         }
 
         Logger.log("&aStarted rotation timer.");
 
-        rotateTimerId = Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> {
+        long ticks = getMinutesLeft()*(20*60);
+
+        rotateTimerId = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
 
             // todo: rotate items + logs
+            plugin.getRotationUtils().rotateItems().whenComplete((value, throwable) -> {
+                Logger.log("&d&lDEBUG rotationCalled");
+            });
 
-        }, getMinutesLeft()*(20*60)).getTaskId();
+        }, ticks, ticks).getTaskId();
     }
 
     public void stopRotateTimer() {
@@ -114,9 +122,11 @@ public class TimerUtils {
             return;
         }
 
+        int ticks = timerMinutes*(20*60);
+
         uptimeTimerId = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             updateUptime(true);
-        }, timerMinutes*(20*60), timerMinutes*(20*60)).getTaskId();
+        }, ticks, ticks).getTaskId();
 
         Logger.log("&aUptime timer has started.");
     }

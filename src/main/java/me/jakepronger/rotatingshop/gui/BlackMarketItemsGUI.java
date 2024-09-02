@@ -2,6 +2,7 @@ package me.jakepronger.rotatingshop.gui;
 
 import me.jakepronger.rotatingshop.config.DataUtils;
 import me.jakepronger.rotatingshop.utils.InvUtils;
+import me.jakepronger.rotatingshop.utils.Logger;
 import me.jakepronger.rotatingshop.utils.Utils;
 
 import org.bukkit.Bukkit;
@@ -25,6 +26,13 @@ public class BlackMarketItemsGUI {
     public static void open(Player p) {
 
         Inventory inv = InvUtils.loadInventory("items.gui", p);
+
+        if (inv == null) {
+            p.sendMessage(Utils.format("&cFailed to load inventory!"));
+            Logger.error("");
+            // todo: ^
+            return;
+        }
 
         DataUtils data = plugin.getDataUtils();
 

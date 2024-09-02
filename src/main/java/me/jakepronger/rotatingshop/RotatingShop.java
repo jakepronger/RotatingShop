@@ -79,12 +79,16 @@ public class RotatingShop extends JavaPlugin {
         return dataUtils;
     }
 
-    public PlayerPointsHook getPlayerPointsHook() {
-        return ppHook;
-    }
-
     public TimerUtils getTimerUtils() {
         return timerUtils;
+    }
+
+    public RotationUtils getRotationUtils() {
+        return rotationUtils;
+    }
+
+    public PlayerPointsHook getPlayerPointsHook() {
+        return ppHook;
     }
 
     private void registerEvents() {
