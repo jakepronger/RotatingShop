@@ -53,18 +53,18 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
             return;
         }
 
-        Player player = (Player) sender;
+        Player p = (Player) sender;
 
         ConfigUtils config = plugin.getConfigUtils();
 
         if (args.length == 0) {
 
             if (!config.hasBlackMarketPerm(sender)) {
-                player.sendMessage(config.getNoPermMessage());
+                p.sendMessage(config.getNoPermMessage());
                 return;
             }
 
-            BlackMarketGUI.open(player);
+            BlackMarketGUI.open(p);
 
             return;
 
@@ -72,24 +72,24 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
             if (args[0].equalsIgnoreCase("reload")) {
 
-                if (!config.hasReloadPerm(player)) {
-                    player.sendMessage(config.getNoPermMessage());
+                if (!config.hasReloadPerm(p)) {
+                    p.sendMessage(config.getNoPermMessage());
                     return;
                 }
 
                 long delay = Utils.reload();
-                player.sendMessage(Utils.format("&aReloaded in &f" + delay + "ms&a."));
+                p.sendMessage(Utils.format("&aReloaded in &f" + delay + "ms&a."));
 
                 return;
 
             } else if (args[0].equalsIgnoreCase("editor")) {
 
                 if (!config.hasEditorPerm(sender)) {
-                    player.sendMessage(config.getNoPermMessage());
+                    p.sendMessage(config.getNoPermMessage());
                     return;
                 }
 
-                BlackMarketItemsGUI.open(player);
+                BlackMarketItemsGUI.open(p);
 
                 return;
 
@@ -102,7 +102,7 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
         } else if (args.length == 2 && args[0].equalsIgnoreCase("add")) {
 
             if (!config.hasEditorPerm(sender)) {
-                player.sendMessage(config.getNoPermMessage());
+                p.sendMessage(config.getNoPermMessage());
                 return;
             }
 
@@ -111,15 +111,15 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
             try {
                 price = Double.parseDouble(args[1]);
             } catch (Exception e) {
-                player.sendMessage(Utils.format("&cInvalid price: ") + args[1]);
+                p.sendMessage(Utils.format("&cInvalid price: ") + args[1]);
                 return;
             }
 
             // get main hand item
-            ItemStack item = player.getInventory().getItemInMainHand();
+            ItemStack item = p.getInventory().getItemInMainHand();
 
             if (item.getType() == Material.AIR) {
-                player.sendMessage(Utils.format("&cNo item in main hand."));
+                p.sendMessage(Utils.format("&cNo item in main hand."));
                 return;
             }
 
@@ -133,15 +133,15 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
             return;
         }
 
-        if (config.hasEditorPerm(player)
-                && config.hasReloadPerm(player))
-            player.sendMessage(Utils.format("&c") + "/" + label + " [editor/add/refresh/reload]");
-        else if (config.hasEditorPerm(player))
-            player.sendMessage(Utils.format("&c") + "/" + label + " [editor/add/refresh]");
-        else if (config.hasReloadPerm(player))
-            player.sendMessage(Utils.format("&c") + "/" + label + " [reload]");
+        if (config.hasEditorPerm(p)
+                && config.hasReloadPerm(p))
+            p.sendMessage(Utils.format("&c") + "/" + label + " [editor/add/refresh/reload]");
+        else if (config.hasEditorPerm(p))
+            p.sendMessage(Utils.format("&c") + "/" + label + " [editor/add/refresh]");
+        else if (config.hasReloadPerm(p))
+            p.sendMessage(Utils.format("&c") + "/" + label + " [reload]");
         else
-            player.sendMessage(Utils.format("&c") + "/" + label); // usage
+            p.sendMessage(Utils.format("&c") + "/" + label); // usage
     }
 
     @Override

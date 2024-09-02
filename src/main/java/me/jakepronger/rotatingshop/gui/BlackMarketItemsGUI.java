@@ -2,7 +2,6 @@ package me.jakepronger.rotatingshop.gui;
 
 import me.jakepronger.rotatingshop.config.DataUtils;
 import me.jakepronger.rotatingshop.utils.InvUtils;
-import me.jakepronger.rotatingshop.utils.Logger;
 import me.jakepronger.rotatingshop.utils.Utils;
 
 import org.bukkit.Bukkit;
@@ -23,8 +22,14 @@ import static me.jakepronger.rotatingshop.RotatingShop.plugin;
 public class BlackMarketItemsGUI {
 
     public static HashMap<Player, Inventory> openInventories = new HashMap<>();
-
+    
     public static void open(Player p) {
+        open(p, 1);
+    }
+
+    public static void open(Player p, int page) {
+
+        DataUtils data = plugin.getDataUtils();
 
         Inventory inv = InvUtils.loadInventory("editor.gui", p);
 
@@ -33,21 +38,43 @@ public class BlackMarketItemsGUI {
             return;
         }
 
-        DataUtils data = plugin.getDataUtils();
+        List<Integer> editorSlots = plugin.getConfigUtils().getEditorItemSlots();
+        int editorSlotsAmount = editorSlots.size();
+
+        // todo: verify max page number
+        if (page < 1) {
+            page = 1;
+        }
+
+        int maxPage = data.getItemsAmount() / editorSlotsAmount;
+        if (page > maxPage)
+            page = maxPage;
+
+        Bukkit.broadcastMessage("opened editor at page: " + page);
+
+        int firstSlotIndex = editorSlotsAmount*(page-1);
+
+        NamespacedKey key = new NamespacedKey(plugin, "page");
+
+        PersistentDataContainer dataContainer = p.getPersistentDataContainer();
+        dataContainer.set(key, PersistentDataType.INTEGER, page);
 
         data.getItems().whenComplete((items, throwable) -> {
 
-            for (int i = 1; true; i++) {
+            int loopIndex = firstSlotIndex;
 
-                if (i > items.size()) {
+            for (int editorSlot : editorSlots) {
+
+                if (loopIndex > items.size()) {
                     break;
                 }
 
-                Map.Entry<ItemStack, Double> entry = items.get(i-1);
+                Map.Entry<ItemStack, Double> entry = items.get(loopIndex);
                 if (entry == null) {
                     break;
                 }
 
+                // item formatting
                 double price = entry.getValue();
 
                 ItemStack item = entry.getKey();
@@ -55,18 +82,20 @@ public class BlackMarketItemsGUI {
 
                 PersistentDataContainer pData = meta.getPersistentDataContainer();
                 pData.set(new NamespacedKey(plugin, "price"), PersistentDataType.DOUBLE, price);
-                pData.set(new NamespacedKey(plugin, "index"), PersistentDataType.INTEGER, i);
+                pData.set(new NamespacedKey(plugin, "index"), PersistentDataType.INTEGER, loopIndex);
 
                 List<String> lore = meta.getLore();
                 lore.add(Utils.format("&8----------"));
                 lore.add(Utils.format("&7Price: &a" + price));
-                lore.add(Utils.format("&7Index: &a" + i));
+                lore.add(Utils.format("&7Index: &a" + loopIndex));
 
                 meta.setLore(lore);
 
                 item.setItemMeta(meta);
 
-                inv.setItem(i-1, item);
+                inv.setItem(editorSlot, item);
+
+                loopIndex++;
             }
 
             Bukkit.getScheduler().runTask(plugin, () -> {
