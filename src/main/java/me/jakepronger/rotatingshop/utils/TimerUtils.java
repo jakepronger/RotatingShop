@@ -74,7 +74,8 @@ public class TimerUtils {
 
         if (UPTIME >= rotateMinutes) {
 
-            UPTIME = UPTIME - rotateMinutes;
+            while (UPTIME >= rotateMinutes)
+                UPTIME = UPTIME - rotateMinutes;
 
             // update uptime in config
             dataUtils.setUptime(UPTIME).whenComplete((result, throwable) -> {
@@ -87,8 +88,6 @@ public class TimerUtils {
             });
         }
 
-        Logger.log("&aStarted rotation timer.");
-
         long ticks = getMinutesLeft()*(20*60);
 
         rotateTimerId = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
@@ -99,6 +98,8 @@ public class TimerUtils {
             });
 
         }, ticks, ticks).getTaskId();
+
+        Logger.log("&aStarted rotation timer.");
     }
 
     public void stopRotateTimer() {
@@ -118,7 +119,7 @@ public class TimerUtils {
             return;
 
         if (uptimeTimerId != 0) {
-            Logger.error("&cUptime timer has already started. Aborting.");
+            Logger.error("&cUptime timer is already running. Aborting.");
             return;
         }
 
@@ -128,7 +129,7 @@ public class TimerUtils {
             updateUptime(true);
         }, ticks, ticks).getTaskId();
 
-        Logger.log("&aUptime timer has started.");
+        Logger.log("&aStarted uptime timer.");
     }
 
     public void stopTimer() {
@@ -139,7 +140,7 @@ public class TimerUtils {
         Bukkit.getScheduler().cancelTask(uptimeTimerId);
         uptimeTimerId = 0;
 
-        Logger.log("&aUptime timer has stopped.");
+        Logger.log("&aStopped uptime timer.");
     }
 
     public void reloadTimer() {

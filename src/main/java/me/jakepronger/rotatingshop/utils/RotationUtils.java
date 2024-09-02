@@ -21,6 +21,7 @@ public class RotationUtils {
     private final ConfigUtils configUtils;
 
     public RotationUtils(DataUtils dataUtils, ConfigUtils configUtils) {
+
         this.dataUtils = dataUtils;
         this.configUtils = configUtils;
 
