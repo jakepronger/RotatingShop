@@ -54,6 +54,7 @@ public class ConfigUtils {
     }
 
     public int getItemRotateMinutes() {
+        // todo: division not working
         return config.getInt("shop.items.rotation", 360) / 60;
     }
 
