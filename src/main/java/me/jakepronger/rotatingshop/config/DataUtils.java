@@ -22,6 +22,7 @@ import static me.jakepronger.rotatingshop.RotatingShop.plugin;
 public class DataUtils {
 
     private final List<Integer> rotationInts;
+    private final ArrayList<Map.Entry<ItemStack, Double>> items;
 
     private final File file;
     private FileConfiguration config;
@@ -32,6 +33,7 @@ public class DataUtils {
         file = new File(filePath);
 
         rotationInts = new ArrayList<>();
+        items = new ArrayList<>();
 
         loadConfig();
     }
@@ -49,6 +51,11 @@ public class DataUtils {
     }
 
     public int getItemsAmount() {
+        return items.size();
+    }
+
+    /*@Deprecated
+    public int getItemsAmount() {
 
         int amount = 0;
 
@@ -58,7 +65,7 @@ public class DataUtils {
         }
 
         return amount;
-    }
+    }*/
 
     public List<Integer> getRotationInts() {
         return rotationInts;
@@ -98,6 +105,9 @@ public class DataUtils {
 
             save(config);
 
+            rotationInts.clear();
+            rotationInts.addAll(intList);
+
             return null;
         });
     }
@@ -109,7 +119,12 @@ public class DataUtils {
         });
     }
 
-    public CompletableFuture<Map.Entry<ItemStack, Double>> getItem(int index) {
+    public Map.Entry<ItemStack, Double> getItem(int index) {
+        return items.get(index - 1);
+    }
+
+    @Deprecated
+    /*public CompletableFuture<Map.Entry<ItemStack, Double>> getItem(int index) {
         return CompletableFuture.supplyAsync(() -> {
 
             String sectionPath = "items." + index;
@@ -124,29 +139,28 @@ public class DataUtils {
 
             return Map.entry(item, price);
         });
+    }*/
+
+    public ArrayList<Map.Entry<ItemStack, Double>> getItems() {
+        return items;
     }
 
-    public CompletableFuture<ArrayList<Map.Entry<ItemStack, Double>>> getItems() {
-        return CompletableFuture.supplyAsync(() -> {
+    public void loadItems() {
+        items.clear();
 
-            ArrayList<Map.Entry<ItemStack, Double>> list = new ArrayList<>();
+        for (int index = 1; true; index++) {
+            String sectionPath = "items." + index;
+            ConfigurationSection section = config.getConfigurationSection(sectionPath);
 
-            for (int index = 1; true; index++) {
-                String sectionPath = "items." + index;
-                ConfigurationSection section = config.getConfigurationSection(sectionPath);
-
-                if (section == null) {
-                    break;
-                }
-
-                double price = section.getDouble("price");
-                ItemStack item = ItemSerializer.deserializeItemStack(section.getString("item"));
-
-                list.add(Map.entry(item, price));
+            if (section == null) {
+                break;
             }
 
-            return list;
-        });
+            double price = section.getDouble("price");
+            ItemStack item = ItemSerializer.deserializeItemStack(section.getString("item"));
+
+            items.add(Map.entry(item, price));
+        }
     }
 
     public CompletableFuture<Boolean> setItemPrice(int index, double price) {
@@ -204,13 +218,17 @@ public class DataUtils {
             // todo: if number is above index remove one from number (in current rotation)
             // todo: if number is index reupdate number in current rotation?
 
-            return save(config);
+            boolean saveResult = save(config);
+
+            items.remove(index-1);
+
+            return saveResult;
         });
     }
 
     public CompletableFuture<Boolean> addItem(ItemStack item, double price) {
 
-        int nextId = getNextIndex(config);
+        int nextId = getNextIndex();
 
         return CompletableFuture.supplyAsync(() -> {
 
@@ -224,21 +242,16 @@ public class DataUtils {
             section.set("item", ItemSerializer.serializeItemStack(item));
             section.set("price", price);
 
-            return save(config);
+            boolean saveResult = save(config);
+
+            items.add(Map.entry(item, price));
+
+            return saveResult;
         });
     }
 
-    private int getNextIndex(FileConfiguration config) {
-
-        ConfigurationSection section = config.getConfigurationSection("items");
-        if (section == null)
-            return 1;
-
-        int size = section.getKeys(false).size();
-        if (size == 0)
-            return 1;
-
-        return size + 1;
+    private int getNextIndex() {
+        return getItemsAmount() + 1;
     }
 
     public void reloadConfig() {
@@ -273,6 +286,7 @@ public class DataUtils {
         config = YamlConfiguration.loadConfiguration(file);
 
         loadRotationInts();
+        loadItems();
 
         if (isReload)
             Logger.log("&aReloaded data.yml file.");
