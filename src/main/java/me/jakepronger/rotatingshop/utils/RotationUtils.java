@@ -88,27 +88,14 @@ public class RotationUtils {
         });
     }
 
-    private CompletableFuture<Void> loadItems(List<Integer> numbers) {
+    private void loadItems(List<Integer> numbers) {
 
-        CompletableFuture<Void> response = new CompletableFuture<>();
+        items.clear();
 
-        CompletableFuture.runAsync(() -> {
-            items.clear();
-
-            List<CompletableFuture<Map.Entry<ItemStack, Double>>> futures = new ArrayList<>();
-
-            // set items
-            for (int num : numbers) {
-                futures.add(dataUtils.getItem(num).whenComplete((entry, throwable) ->
-                        items.put(num, entry)));
-            }
-
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).whenComplete((avoid, throwable) -> {
-                response.complete(null);
-            });
-        });
-
-        return response;
+        // set items
+        for (int num : numbers) {
+            items.put(num, dataUtils.getItem(num));
+        }
     }
 
     public void reload() {
