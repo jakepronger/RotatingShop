@@ -30,14 +30,12 @@ public class RotationUtils {
         initiateItems();
     }
 
-    private CompletableFuture<Void> initiateItems() {
+    private void initiateItems() {
 
         List<Integer> numbers = dataUtils.getRotationInts();
         if (numbers.isEmpty()) {
-            return rotateItems();
-        }
-
-        return loadItems(numbers);
+            rotateItems();
+        } else loadItems(numbers);
     }
 
     public CompletableFuture<Void> rotateItems() {
@@ -48,9 +46,8 @@ public class RotationUtils {
             getNewNumbers().whenComplete((numbers, throwable) -> {
                 dataUtils.setRotationInts(numbers).whenComplete((result, throwable1) -> {
                     // item loading
-                    loadItems(numbers).whenComplete((value, throwable2) -> {
-                        response.complete(null);
-                    });
+                    loadItems(numbers);
+                    response.complete(null);
                 });
             });
         });

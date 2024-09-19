@@ -71,75 +71,74 @@ public class BlackMarketItemsGUI {
 
         //Bukkit.broadcastMessage("debug 1");
 
-        data.getItems().whenComplete((items, throwable) -> {
+        ArrayList<Map.Entry<ItemStack, Double>> items = data.getItems();
 
-            //Bukkit.broadcastMessage("debug 2");
+        //Bukkit.broadcastMessage("debug 2");
 
-            int loopIndex = firstSlotIndex;
+        int loopIndex = firstSlotIndex;
 
-            for (int editorSlot : editorSlots) {
+        for (int editorSlot : editorSlots) {
 
-                //Bukkit.broadcastMessage("loop debug: " + loopIndex);
+            //Bukkit.broadcastMessage("loop debug: " + loopIndex);
 
-                if (loopIndex > items.size()) {
-                    break;
-                }
-
-                //Bukkit.broadcastMessage("debug 3");
-
-                Map.Entry<ItemStack, Double> entry = items.get(loopIndex);
-                if (entry == null) {
-                    break;
-                }
-
-                //Bukkit.broadcastMessage("debug 4");
-
-                // item formatting
-                double price = entry.getValue();
-
-                //Bukkit.broadcastMessage("debug 5");
-
-                ItemStack item = entry.getKey();
-                ItemMeta meta = item.getItemMeta();
-
-                //Bukkit.broadcastMessage("debug 6");
-
-                PersistentDataContainer pData = meta.getPersistentDataContainer();
-                pData.set(new NamespacedKey(plugin, "price"), PersistentDataType.DOUBLE, price);
-                pData.set(new NamespacedKey(plugin, "index"), PersistentDataType.INTEGER, loopIndex);
-
-                //Bukkit.broadcastMessage("debug 7");
-
-                List<String> lore = new ArrayList<>();
-                if (meta.getLore() != null)
-                    lore = meta.getLore();
-
-                lore.add(Utils.format("&8----------"));
-                lore.add(Utils.format("&7Price: &a" + price));
-                lore.add(Utils.format("&7Index: &a" + loopIndex));
-
-                //Bukkit.broadcastMessage("debug 8");
-
-                meta.setLore(lore);
-
-                item.setItemMeta(meta);
-
-                //Bukkit.broadcastMessage("debug 9");
-
-                inv.setItem(editorSlot, item);
-
-                //Bukkit.broadcastMessage("debug 10");
-
-                loopIndex++;
+            if (loopIndex > items.size()) {
+                break;
             }
 
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                //Bukkit.broadcastMessage("debuga 11");
-                openInventories.put(p, inv);
-                p.openInventory(inv);
-                //Bukkit.broadcastMessage("debuga 12");
-            });
-        });
+            //Bukkit.broadcastMessage("debug 3");
+
+            Map.Entry<ItemStack, Double> entry = items.get(loopIndex);
+            if (entry == null) {
+                break;
+            }
+
+            //Bukkit.broadcastMessage("debug 4");
+
+            // item formatting
+            double price = entry.getValue();
+
+            //Bukkit.broadcastMessage("debug 5");
+
+            ItemStack item = entry.getKey();
+            ItemMeta meta = item.getItemMeta();
+
+            //Bukkit.broadcastMessage("debug 6");
+
+            PersistentDataContainer pData = meta.getPersistentDataContainer();
+            pData.set(new NamespacedKey(plugin, "price"), PersistentDataType.DOUBLE, price);
+            pData.set(new NamespacedKey(plugin, "index"), PersistentDataType.INTEGER, loopIndex);
+
+            //Bukkit.broadcastMessage("debug 7");
+
+            List<String> lore = new ArrayList<>();
+            if (meta.getLore() != null)
+                lore = meta.getLore();
+
+            lore.add(Utils.format("&8----------"));
+            lore.add(Utils.format("&7Price: &a" + price));
+            lore.add(Utils.format("&7Index: &a" + loopIndex));
+
+            //Bukkit.broadcastMessage("debug 8");
+
+            meta.setLore(lore);
+
+            item.setItemMeta(meta);
+
+            //Bukkit.broadcastMessage("debug 9");
+
+            inv.setItem(editorSlot, item);
+
+            //Bukkit.broadcastMessage("debug 10");
+
+            loopIndex++;
+        }
+
+        //Bukkit.getScheduler().runTask(plugin, () -> {
+            //Bukkit.broadcastMessage("debuga 11");
+            openInventories.put(p, inv);
+            p.openInventory(inv);
+            //Bukkit.broadcastMessage("debuga 12");
+        //});
 
     }
 

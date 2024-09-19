@@ -123,7 +123,7 @@ public class DataUtils {
         return items.get(index - 1);
     }
 
-    @Deprecated
+    //@Deprecated
     /*public CompletableFuture<Map.Entry<ItemStack, Double>> getItem(int index) {
         return CompletableFuture.supplyAsync(() -> {
 
