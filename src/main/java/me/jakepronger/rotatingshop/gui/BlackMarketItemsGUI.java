@@ -4,6 +4,8 @@ import me.jakepronger.rotatingshop.config.DataUtils;
 import me.jakepronger.rotatingshop.utils.InvUtils;
 import me.jakepronger.rotatingshop.utils.Utils;
 
+import net.kyori.adventure.text.Component;
+
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -13,10 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static me.jakepronger.rotatingshop.RotatingShop.plugin;
 
@@ -110,17 +109,20 @@ public class BlackMarketItemsGUI {
 
             //Bukkit.broadcastMessage("debug 7");
 
-            List<String> lore = new ArrayList<>();
-            if (meta.getLore() != null)
-                lore = meta.getLore();
+            Component pageComponent = Utils.stringToComponent(Utils.format("&7Page: &a" + page));
+            Component priceComponent = Utils.stringToComponent(Utils.format("&7Price: &a" + price));
+            Component indexComponent = Utils.stringToComponent(Utils.format("&7Index: &a" + loopIndex));
 
-            lore.add(Utils.format("&8----------"));
-            lore.add(Utils.format("&7Price: &a" + price));
-            lore.add(Utils.format("&7Index: &a" + loopIndex));
+            List<Component> lore = meta.hasLore() ? meta.lore() : new ArrayList<>();
+            if (lore == null) {
+                lore = new ArrayList<>();
+            }
+
+            lore.addAll(Arrays.asList(pageComponent, priceComponent, indexComponent));
 
             //Bukkit.broadcastMessage("debug 8");
 
-            meta.setLore(lore);
+            meta.lore(lore);
 
             item.setItemMeta(meta);
 
