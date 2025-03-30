@@ -1,7 +1,9 @@
 package me.jakepronger.rotatingshop.utils;
 
-import me.jakepronger.rotatingshop.config.DataUtils;
+import me.jakepronger.rotatingshop.RotatingShop;
+import me.jakepronger.rotatingshop.config.ConfigUtils;
 
+import me.jakepronger.rotatingshop.config.DataUtils;
 import org.bukkit.Bukkit;
 
 import java.util.concurrent.CompletableFuture;
@@ -10,7 +12,8 @@ import static me.jakepronger.rotatingshop.RotatingShop.plugin;
 
 public class TimerUtils {
 
-    private final DataUtils dataUtils;
+    private final ConfigUtils config;
+    private final DataUtils data;
 
     private final long START_TIME;
     private long UPTIME;
@@ -23,9 +26,10 @@ public class TimerUtils {
     private int uptimeTimerId;
     private int rotateTimerId;
 
-    public TimerUtils(DataUtils dataUtils) {
+    public TimerUtils(RotatingShop plugin) {
 
-        this.dataUtils = dataUtils;
+        this.config = plugin.getConfigUtils();
+        this.data = plugin.getDataUtils();
 
         START_TIME = System.currentTimeMillis();
 
@@ -34,13 +38,13 @@ public class TimerUtils {
 
     private void initiateVars() {
 
-        UPTIME = dataUtils.getUptime();
-        useTimer = dataUtils.isTimerEnabled();
+        UPTIME = data.getUptime();
+        useTimer = config.isTimerEnabled();
 
         // if timer minutes is less than one use default value
-        int timerMinutes = dataUtils.getTimerMinutes();
+        int timerMinutes = config.getTimerMinutes();
 
-        if (dataUtils.getTimerMinutes() < 1)
+        if (config.getTimerMinutes() < 1)
             this.timerMinutes = 5;
         else this.timerMinutes = timerMinutes;
 
@@ -78,8 +82,8 @@ public class TimerUtils {
                 UPTIME = UPTIME - rotateMinutes;
 
             // update uptime in config
-            dataUtils.setUptime(UPTIME).whenComplete((result, throwable) -> {
-                Logger.debug("Uptime reset to offset in data.yml: " + UPTIME);
+            data.setUptime(UPTIME).whenComplete((result, throwable) -> {
+                Logger.debug("Uptime reset to offset in data.json: " + UPTIME);
             });
 
             // todo: rotate items + logs
@@ -192,9 +196,9 @@ public class TimerUtils {
         UPTIME = newUptime;
 
         // update new uptime in config
-        dataUtils.setUptime(UPTIME).whenComplete((result, throwable) -> {
+        data.setUptime(UPTIME).whenComplete((result, throwable) -> {
 
-            Logger.debug("Updated uptime in data.yml: " + UPTIME);
+            Logger.debug("Updated uptime in data.json: " + UPTIME);
 
             if (rotateRequired) {
                 // todo: rotate items + logs

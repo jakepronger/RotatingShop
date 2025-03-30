@@ -60,7 +60,6 @@ public class BlackMarketItemsGUI {
 
         int firstSlotIndex = editorSlotsAmount*(page-1) + 1;
         Bukkit.broadcastMessage("editorSlotsAmount: " + editorSlotsAmount);
-        Bukkit.broadcastMessage("page: " + page);
         Bukkit.broadcastMessage("firstSlotIndex: " + firstSlotIndex);
 
         NamespacedKey key = new NamespacedKey(plugin, "page");
@@ -68,80 +67,51 @@ public class BlackMarketItemsGUI {
         PersistentDataContainer dataContainer = p.getPersistentDataContainer();
         dataContainer.set(key, PersistentDataType.INTEGER, page);
 
-        //Bukkit.broadcastMessage("debug 1");
-
         ArrayList<Map.Entry<ItemStack, Double>> items = data.getItems();
-
-        //Bukkit.broadcastMessage("debug 2");
 
         int loopIndex = firstSlotIndex;
 
         for (int editorSlot : editorSlots) {
 
-            //Bukkit.broadcastMessage("loop debug: " + loopIndex);
-
             if (loopIndex > items.size()) {
                 break;
             }
 
-            //Bukkit.broadcastMessage("debug 3");
-
-            Map.Entry<ItemStack, Double> entry = items.get(loopIndex);
+            Map.Entry<ItemStack, Double> entry = items.get(loopIndex - 1);
             if (entry == null) {
                 break;
             }
 
-            //Bukkit.broadcastMessage("debug 4");
-
             // item formatting
             double price = entry.getValue();
 
-            //Bukkit.broadcastMessage("debug 5");
-
             ItemStack item = entry.getKey();
             ItemMeta meta = item.getItemMeta();
-
-            //Bukkit.broadcastMessage("debug 6");
 
             PersistentDataContainer pData = meta.getPersistentDataContainer();
             pData.set(new NamespacedKey(plugin, "price"), PersistentDataType.DOUBLE, price);
             pData.set(new NamespacedKey(plugin, "index"), PersistentDataType.INTEGER, loopIndex);
 
-            //Bukkit.broadcastMessage("debug 7");
-
             Component pageComponent = Utils.stringToComponent(Utils.format("&7Page: &a" + page));
             Component priceComponent = Utils.stringToComponent(Utils.format("&7Price: &a" + price));
             Component indexComponent = Utils.stringToComponent(Utils.format("&7Index: &a" + loopIndex));
 
-            List<Component> lore = meta.hasLore() ? meta.lore() : new ArrayList<>();
-            if (lore == null) {
-                lore = new ArrayList<>();
-            }
-
-            lore.addAll(Arrays.asList(pageComponent, priceComponent, indexComponent));
-
-            //Bukkit.broadcastMessage("debug 8");
+            List<Component> lore = new ArrayList<>();
+            lore.add(pageComponent);
+            lore.add(priceComponent);
+            lore.add(indexComponent);
 
             meta.lore(lore);
 
             item.setItemMeta(meta);
 
-            //Bukkit.broadcastMessage("debug 9");
-
             inv.setItem(editorSlot, item);
-
-            //Bukkit.broadcastMessage("debug 10");
 
             loopIndex++;
         }
 
-        //Bukkit.getScheduler().runTask(plugin, () -> {
-            //Bukkit.broadcastMessage("debuga 11");
-            openInventories.put(p, inv);
-            p.openInventory(inv);
-            //Bukkit.broadcastMessage("debuga 12");
-        //});
-
+        openInventories.put(p, inv);
+        p.openInventory(inv);
     }
 
 }

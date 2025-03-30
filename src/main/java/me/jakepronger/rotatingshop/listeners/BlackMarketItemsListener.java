@@ -69,7 +69,7 @@ public class BlackMarketItemsListener implements Listener {
             p.closeInventory();
             p.sendMessage(Utils.format("&aPurchased!"));
 
-            plugin.getDataUtils().removeItem(index).whenComplete((value, throwable) -> {
+            plugin.getDataUtils().removeAndShiftItem(index).whenComplete((value, throwable) -> {
                p.sendMessage(Utils.format("&aremoved item at index " + index));
             });
 

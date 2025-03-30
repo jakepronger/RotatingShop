@@ -30,6 +30,15 @@ public class ConfigUtils {
         loadConfig();
     }
 
+    /** Item Rotation Timer **/
+    public boolean isTimerEnabled() {
+        return config.getBoolean("time.uptime-updater.use", true);
+    }
+    public int getTimerMinutes() {
+        return config.getInt("time.uptime-updater.minutes", 5);
+    }
+    /** Item Rotation Timer **/
+
     public boolean hasReloadPerm(CommandSender s) {
         return !config.getBoolean("permissions.reload.require", true)
                 || s.hasPermission(config.getString("permissions.reload.node", "rs.reload"));

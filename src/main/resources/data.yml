@@ -1,9 +1,0 @@
-time:
-  uptime: 0 # tracks current rotation time in minutes (resets every rotation)
-  uptime-updater: # update uptime every specified minutes in-case of an in proper server shutdown (crash)
-    use: true
-    minutes: 5
-
-rotation: {}
-
-items: {}

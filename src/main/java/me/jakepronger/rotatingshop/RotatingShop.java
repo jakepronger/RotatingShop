@@ -31,7 +31,7 @@ public class RotatingShop extends JavaPlugin {
         plugin = this;
 
         configUtils = new ConfigUtils(plugin);
-        dataUtils = new DataUtils("data.yml");
+        dataUtils = new DataUtils("data.json");
 
         ppHook = new PlayerPointsHook(plugin);
         if (!ppHook.hook()) {
@@ -41,7 +41,7 @@ public class RotatingShop extends JavaPlugin {
 
         rotationUtils = new RotationUtils(dataUtils, configUtils);
 
-        timerUtils = new TimerUtils(dataUtils);
+        timerUtils = new TimerUtils(plugin);
         timerUtils.startRotateTimer();
         timerUtils.startTimer();
 

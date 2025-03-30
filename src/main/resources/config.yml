@@ -1,6 +1,12 @@
 log:
   debug: true # <- print out debug logs
 
+# Rotation timer
+time:
+  uptime-updater: # update uptime every specified minutes in-case of an in proper server shutdown (crash)
+    use: true
+    minutes: 5
+
 # Permission settings
 permissions:
   no-perm: "&cNo permissions!"

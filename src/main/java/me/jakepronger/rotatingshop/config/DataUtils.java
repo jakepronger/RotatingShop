@@ -1,17 +1,15 @@
 package me.jakepronger.rotatingshop.config;
 
+import com.google.gson.*;
+
 import me.jakepronger.rotatingshop.utils.ItemSerializer;
 import me.jakepronger.rotatingshop.utils.Logger;
 
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,12 +23,11 @@ public class DataUtils {
     private final ArrayList<Map.Entry<ItemStack, Double>> items;
 
     private final File file;
-    private FileConfiguration config;
+    private JsonObject config;
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public DataUtils(String fileName) {
-
-        String filePath = plugin.getDataFolder() + File.separator + fileName;
-        file = new File(filePath);
+        file = new File(plugin.getDataFolder(), fileName);
 
         rotationInts = new ArrayList<>();
         items = new ArrayList<>();
@@ -38,73 +35,65 @@ public class DataUtils {
         loadConfig();
     }
 
-    public boolean isTimerEnabled() {
-        return config.getBoolean("time.uptime-updater.use", true);
-    }
-
-    public int getTimerMinutes() {
-        return config.getInt("time.uptime-updater.minutes", 5);
-    }
-
+    // Method to get uptime from the JSON config
     public long getUptime() {
-        return config.getLong("time.uptime", 0);
+        // Check if the "time.current-uptime" property exists and return its value, otherwise return 0
+        return config.has("time.current-uptime") ? config.get("time.current-uptime").getAsLong() : 0;
+    }
+
+    // Method to set uptime in the JSON config
+    public CompletableFuture<Void> setUptime(long uptime) {
+        return CompletableFuture.runAsync(() -> {
+            // Set the new uptime in the JSON config
+            config.addProperty("time.current-uptime", uptime);
+
+            // Save the updated config to the file
+            save(config);  // Assuming this method saves the config correctly
+        });
     }
 
     public int getItemsAmount() {
         return items.size();
     }
 
-    /*@Deprecated
-    public int getItemsAmount() {
-
-        int amount = 0;
-
-        ConfigurationSection section = config.getConfigurationSection("items");
-        if (section != null) {
-            amount = section.getKeys(false).size();
-        }
-
-        return amount;
-    }*/
-
     public List<Integer> getRotationInts() {
         return rotationInts;
     }
 
     private void loadRotationInts() {
+        JsonArray rotationArray = config.getAsJsonArray("rotation");
 
-        String value = config.getString("rotation", "");
-        if (value.isEmpty())
+        if (rotationArray == null || rotationArray.isEmpty())
             return;
 
-        for (String loopValue : value.split(",")) {
-
-            int number;
+        for (JsonElement element : rotationArray) {
             try {
-                number = Integer.parseInt(loopValue);
+                int number = element.getAsInt();  // Directly get the integer from the JsonElement
+                rotationInts.add(number);
             } catch (Exception e) {
                 Logger.error("Error parsing int: " + e.getMessage());
-                continue;
             }
-
-            rotationInts.add(number);
         }
     }
 
     public CompletableFuture<Void> setRotationInts(List<Integer> intList) {
         return CompletableFuture.supplyAsync(() -> {
 
-            StringBuilder builder = new StringBuilder();
+            // Create a JsonArray to hold the rotation integers
+            JsonArray rotationArray = new JsonArray();
+
+            // Add each integer from the list into the JsonArray
             for (int i : intList) {
-                if (builder.isEmpty())
-                    builder.append(i);
-                else builder.append(",").append(i);
+                rotationArray.add(i);
             }
 
-            config.set("rotation", builder.toString());
+            // Set the "rotation" property in the config to the JsonArray
+            config.add("rotation", rotationArray);
 
+            // Save the config
             save(config);
 
+            // Update the local rotationInts list
             rotationInts.clear();
             rotationInts.addAll(intList);
 
@@ -112,143 +101,128 @@ public class DataUtils {
         });
     }
 
-    public CompletableFuture<Void> setUptime(long uptime) {
-        return CompletableFuture.runAsync(() -> {
-            config.set("time.uptime", uptime);
-            save(config);
-        });
-    }
-
     public Map.Entry<ItemStack, Double> getItem(int index) {
         return items.get(index - 1);
     }
-
-    //@Deprecated
-    /*public CompletableFuture<Map.Entry<ItemStack, Double>> getItem(int index) {
-        return CompletableFuture.supplyAsync(() -> {
-
-            String sectionPath = "items." + index;
-            ConfigurationSection section = config.getConfigurationSection(sectionPath);
-
-            if (section == null) {
-                return null;
-            }
-
-            double price = section.getDouble("price");
-            ItemStack item = ItemSerializer.deserializeItemStack(section.getString("item"));
-
-            return Map.entry(item, price);
-        });
-    }*/
 
     public ArrayList<Map.Entry<ItemStack, Double>> getItems() {
         return items;
     }
 
     public void loadItems() {
-        items.clear();
+        items.clear();  // Clear the current list of items
 
-        for (int index = 1; true; index++) {
-            String sectionPath = "items." + index;
-            ConfigurationSection section = config.getConfigurationSection(sectionPath);
+        // Retrieve the "items" array from the config (JSON)
+        JsonArray itemsArray = config.has("items") ? config.getAsJsonArray("items") : new JsonArray();
 
-            if (section == null) {
-                break;
-            }
+        // Iterate over the items in the array
+        for (JsonElement element : itemsArray) {
+            JsonObject itemObject = element.getAsJsonObject();  // Convert element to JSON object
 
-            double price = section.getDouble("price");
-            ItemStack item = ItemSerializer.deserializeItemStack(section.getString("item"));
+            // Get the item and price from the JSON object
+            String serializedItem = itemObject.get("item").getAsString();
+            double price = itemObject.get("price").getAsDouble();
 
+            // Deserialize the item stack
+            ItemStack item = ItemSerializer.deserializeItemStack(serializedItem);
+
+            // Add the item to the list as a map entry
             items.add(Map.entry(item, price));
         }
     }
 
-    public CompletableFuture<Boolean> setItemPrice(int index, double price) {
+
+    public CompletableFuture<Boolean> setItemPrice(int position, double price) {
         return CompletableFuture.supplyAsync(() -> {
+            // Retrieve the "items" section from the config
+            JsonArray itemsArray = config.has("items") ? config.getAsJsonArray("items") : new JsonArray();
 
-            String sectionPath = "items." + index;
+            // Check if the position exists in the "items" array
+            if (position < 0 || position >= itemsArray.size()) {
+                return false;  // If the position is invalid, return false
+            }
 
-            ConfigurationSection section = config.getConfigurationSection(sectionPath);
-            if (section == null)
-                return false;
+            // Get the item object at the specified position
+            JsonObject itemData = itemsArray.get(position).getAsJsonObject();
 
-            section.set("price", price);
+            // Update the price of the item
+            itemData.addProperty("price", price);
 
+            // Update the "items" array with the modified data
+            itemsArray.set(position, itemData);  // Update the item at the given position
+
+            // Save the updated configuration
+            config.add("items", itemsArray);
+
+            // Save the updated configuration to the file
             return save(config);
         });
     }
 
-    public CompletableFuture<Boolean> removeItem(int index) {
+
+
+    /**
+     * Removes an item from data.json list and adjusts every other item's id down one
+     * @param position
+     * @return
+     */
+    public CompletableFuture<Boolean> removeAndShiftItem(int position) {
         return CompletableFuture.supplyAsync(() -> {
+            // Retrieve the "items" section from the config
+            JsonArray itemsArray = config.has("items") ? config.getAsJsonArray("items") : new JsonArray();
 
-            ConfigurationSection itemSection = config.getConfigurationSection("items");
-            if (itemSection == null)
-                return false;
-
-            ConfigurationSection indexSection = itemSection.getConfigurationSection(String.valueOf(index));
-            if (indexSection == null)
-                return false;
-
-            config.set("items." + index, null);
-
-            for (int loopId = index+1; true; loopId++) {
-
-                ConfigurationSection loopSection = config.getConfigurationSection("items." + loopId);
-
-                if (loopSection == null) {
-                    itemSection.set(String.valueOf(loopId-1), null);
-                    //Bukkit.broadcastMessage("last key '" + loopId + "' set null; break loop");
-                    //Bukkit.broadcastMessage("loopSection null returning '" + "items." + loopId + "'");
-                    break;
-                } else {
-                    itemSection.set(String.valueOf((loopId - 1)), loopSection);
-                    //Bukkit.broadcastMessage("updated item '" + (loopId) + "' to use id " + (loopId-1));
-                }
-
+            // Check if the position exists in the "items" array
+            if (position < 0 || position >= itemsArray.size()) {
+                return false;  // If the position is invalid, return false
             }
 
-            //Bukkit.broadcastMessage("debug 4");
+            // Remove the item at the given position
+            itemsArray.remove(position);
 
-            // update current rotation items
+            // Shift the remaining items down (if any)
+            for (int i = position; i < itemsArray.size(); i++) {
+                JsonObject shiftedItem = itemsArray.get(i).getAsJsonObject();
+                itemsArray.set(i, shiftedItem);  // Just reassigning to shift
+            }
 
-            // todo: if any of rotation items are above index
+            // Save the updated "items" array back to the config
+            config.add("items", itemsArray);
 
-            // todo: loop rotation items numbers
-            //for (int id : )
-            // todo: if number is above index remove one from number (in current rotation)
-            // todo: if number is index reupdate number in current rotation?
-
-            boolean saveResult = save(config);
-
-            items.remove(index-1);
-
-            return saveResult;
+            // Save the updated configuration to the file
+            return save(config);
         });
     }
 
-    public CompletableFuture<Boolean> addItem(ItemStack item, double price) {
 
+    public CompletableFuture<Boolean> addItem(ItemStack item, double price) {
         int nextId = getNextIndex();
 
         return CompletableFuture.supplyAsync(() -> {
+            // Retrieve the "items" section (array) from the config, or create a new one if it doesn't exist
+            JsonArray itemsArray = config.has("items") ? config.getAsJsonArray("items") : new JsonArray();
 
-            ConfigurationSection section = config.getConfigurationSection("items");
-            if (section == null) {
-                section = config.createSection("items");
-            }
+            // Create a new JSON object to store the item data
+            JsonObject itemData = new JsonObject();
+            itemData.addProperty("item", ItemSerializer.serializeItemStack(item));  // Serializing the item
+            itemData.addProperty("price", price);  // Adding the price
 
-            section = section.createSection(String.valueOf(nextId));
+            // Add the new item data to the array
+            itemsArray.add(itemData);
 
-            section.set("item", ItemSerializer.serializeItemStack(item));
-            section.set("price", price);
+            // Update the "items" array in the config
+            config.add("items", itemsArray);
 
+            // Save the updated configuration to file
             boolean saveResult = save(config);
 
-            items.add(Map.entry(item, price));
+            // Optionally, add the item to a local collection for further use (if needed)
+            items.add(Map.entry(item, price));  // Assuming 'items' is a List<Map.Entry<ItemStack, Double>>
 
+            // Return the result of the save operation
             return saveResult;
         });
     }
+
 
     private int getNextIndex() {
         return getItemsAmount() + 1;
@@ -263,11 +237,9 @@ public class DataUtils {
     }
 
     private void loadConfig(boolean isReload) {
-
         boolean fileExists = file.exists();
 
         if (!fileExists) {
-
             InputStream stream = plugin.getResource(file.getName());
 
             if (stream == null) {
@@ -276,43 +248,48 @@ public class DataUtils {
             }
 
             try {
-                Files.copy(stream, new File(plugin.getDataFolder(), file.getName()).toPath());
+                Files.copy(stream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
-                Logger.error("Error creating data.yml file: " + e.getMessage());
+                Logger.error("Error creating " + file.getName() + " file: " + e.getMessage());
                 return;
             }
         }
 
-        config = YamlConfiguration.loadConfiguration(file);
+        // Load JSON instead of YAML
+        try (FileReader reader = new FileReader(file)) {
+            config = JsonParser.parseReader(reader).getAsJsonObject();
+        } catch (IOException e) {
+            Logger.error("Error loading " + file.getName() + ": " + e.getMessage());
+            config = new JsonObject(); // Fallback to empty JSON
+        }
 
         loadRotationInts();
         loadItems();
 
         if (isReload)
-            Logger.log("&aReloaded data.yml file.");
+            Logger.log("&aReloaded " + file.getName() + " file.");
         else if (!fileExists)
-            Logger.log("&aCreated data.yml file.");
+            Logger.log("&aCreated " + file.getName() + " file.");
         else
-            Logger.log("&aLoaded data.yml file.");
+            Logger.log("&aLoaded " + file.getName() + " file.");
     }
 
-    private boolean save(FileConfiguration config) {
-
+    private boolean save(JsonObject config) {
         if (file == null) {
             Logger.error("Failed to save unknown file because it's null.");
             return false;
         }
 
-        try {
-            config.save(file);
-            Logger.debug("Saved data.yml file.");
+        try (FileWriter writer = new FileWriter(file)) {
+            GSON.toJson(config, writer);  // Save JSON to file
+            Logger.debug("Saved " + file.getName() + " file.");
         } catch (Exception e) {
-            Logger.error(e.getMessage());
+            Logger.error("Failed to save " + file.getName() + ": " + e.getMessage());
             return false;
         }
 
         this.config = config;
-        Logger.debug("Updated data.yml config.");
+        Logger.debug("Updated " + file.getName() + " config.");
 
         return true;
     }
