@@ -5,6 +5,8 @@ import com.google.gson.*;
 import me.jakepronger.rotatingshop.utils.ItemSerializer;
 import me.jakepronger.rotatingshop.utils.Logger;
 
+import me.jakepronger.rotatingshop.utils.Utils;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.*;
@@ -119,8 +121,11 @@ public class DataUtils {
         for (JsonElement element : itemsArray) {
             JsonObject itemObject = element.getAsJsonObject();  // Convert element to JSON object
 
+            if (itemObject.get("data") == null)
+                Logger.log("debug: " + itemObject + " is returning null when getting 'data'");
+
             // Get the item and price from the JSON object
-            String serializedItem = itemObject.get("item").getAsString();
+            String serializedItem = itemObject.get("data").getAsString();
             double price = itemObject.get("price").getAsDouble();
 
             // Deserialize the item stack
@@ -203,7 +208,7 @@ public class DataUtils {
 
             // Create a new JSON object to store the item data
             JsonObject itemData = new JsonObject();
-            itemData.addProperty("item", ItemSerializer.serializeItemStack(item));  // Serializing the item
+            itemData.addProperty("data", ItemSerializer.serializeItemStack(item));  // Serializing the item
             itemData.addProperty("price", price);  // Adding the price
 
             // Add the new item data to the array
