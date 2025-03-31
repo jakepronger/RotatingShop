@@ -5,8 +5,6 @@ import com.google.gson.*;
 import me.jakepronger.rotatingshop.utils.ItemSerializer;
 import me.jakepronger.rotatingshop.utils.Logger;
 
-import me.jakepronger.rotatingshop.utils.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.*;
@@ -39,15 +37,15 @@ public class DataUtils {
 
     // Method to get uptime from the JSON config
     public long getUptime() {
-        // Check if the "time.current-uptime" property exists and return its value, otherwise return 0
-        return config.has("time.current-uptime") ? config.get("time.current-uptime").getAsLong() : 0;
+        // Check if the "current-uptime" property exists and return its value, otherwise return 0
+        return config.has("current-uptime") ? config.get("current-uptime").getAsLong() : 0;
     }
 
     // Method to set uptime in the JSON config
     public CompletableFuture<Void> setUptime(long uptime) {
         return CompletableFuture.runAsync(() -> {
             // Set the new uptime in the JSON config
-            config.addProperty("time.current-uptime", uptime);
+            config.addProperty("current-uptime", uptime);
 
             // Save the updated config to the file
             save(config);  // Assuming this method saves the config correctly
@@ -136,7 +134,6 @@ public class DataUtils {
         }
     }
 
-
     public CompletableFuture<Boolean> setItemPrice(int position, double price) {
         return CompletableFuture.supplyAsync(() -> {
             // Retrieve the "items" section from the config
@@ -182,16 +179,18 @@ public class DataUtils {
             }
 
             // Remove the item at the given position
-            itemsArray.remove(position);
+            itemsArray.remove(position-1);
+
+            items.remove(position-1);
 
             // Shift the remaining items down (if any)
-            for (int i = position; i < itemsArray.size(); i++) {
-                JsonObject shiftedItem = itemsArray.get(i).getAsJsonObject();
-                itemsArray.set(i, shiftedItem);  // Just reassigning to shift
-            }
+            //for (int i = position; i < itemsArray.size(); i++) {
+            //    JsonObject shiftedItem = itemsArray.get(i).getAsJsonObject();
+            //    itemsArray.set(i, shiftedItem);  // Just reassigning to shift
+            //}
 
             // Save the updated "items" array back to the config
-            config.add("items", itemsArray);
+            //config.add("items", itemsArray);
 
             // Save the updated configuration to the file
             return save(config);
@@ -287,14 +286,14 @@ public class DataUtils {
 
         try (FileWriter writer = new FileWriter(file)) {
             GSON.toJson(config, writer);  // Save JSON to file
-            Logger.debug("Saved " + file.getName() + " file.");
+            Logger.debug("Saved " + file.getName() + ".");
         } catch (Exception e) {
             Logger.error("Failed to save " + file.getName() + ": " + e.getMessage());
             return false;
         }
 
         this.config = config;
-        Logger.debug("Updated " + file.getName() + " config.");
+        Logger.debug("Updated " + file.getName() + ".");
 
         return true;
     }

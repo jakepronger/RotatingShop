@@ -53,7 +53,7 @@ public class BlackMarketItemsGUI {
 
         int maxPage = (int)maxValue;
 
-        if (page > maxPage)
+        if (page > maxPage && maxPage != 0)
             page = maxPage;
 
         Bukkit.broadcastMessage("opened editor at page: " + page);
