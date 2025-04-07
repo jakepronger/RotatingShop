@@ -6,6 +6,7 @@ import me.jakepronger.rotatingshop.hooks.PlayerPointsHook;
 import me.jakepronger.rotatingshop.listeners.BlackMarketItemsListener;
 import me.jakepronger.rotatingshop.listeners.BlackMarketListener;
 import me.jakepronger.rotatingshop.config.DataUtils;
+import me.jakepronger.rotatingshop.utils.InvUtils;
 import me.jakepronger.rotatingshop.utils.Logger;
 
 import me.jakepronger.rotatingshop.utils.RotationUtils;
@@ -46,10 +47,10 @@ public class RotatingShop extends JavaPlugin {
         timerUtils.startTimer();
 
         registerEvents();
-        Logger.log("&aRegistered events.");
+        Logger.debug("Registered events.");
 
         registerCommands();
-        Logger.log("&aRegistered commands.");
+        Logger.debug("Registered commands.");
 
         Logger.log("&aEnabled");
     }
@@ -98,6 +99,37 @@ public class RotatingShop extends JavaPlugin {
 
     private void registerCommands() {
         getCommand("blackmarket").setExecutor(new BlackMarketCommand());
+    }
+
+    public String reload() {
+
+        long delay = System.currentTimeMillis();
+
+        Logger.log("&cReloading...");
+        Logger.log("&aClosed &f" + InvUtils.closeInventories() + "&a inventories.");
+
+        ConfigUtils config = plugin.getConfigUtils();
+        config.reloadConfig();
+
+        DataUtils data = plugin.getDataUtils();
+        data.reloadConfig();
+
+        PlayerPointsHook ppHook = plugin.getPlayerPointsHook();
+        ppHook.unhook();
+        if (!ppHook.hook()) {
+            plugin.getServer().getPluginManager().disablePlugin(plugin);
+            return "";
+        }
+
+        TimerUtils timer = plugin.getTimerUtils();
+        timer.reloadTimer();
+
+        plugin.getRotationUtils().reload();
+
+        long duration = System.currentTimeMillis() - delay;
+        String message = "&cReloaded in &f" + duration + "ms&c.";
+
+        return message;
     }
 
 }

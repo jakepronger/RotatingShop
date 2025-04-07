@@ -174,7 +174,7 @@ public class DataUtils {
             JsonArray itemsArray = config.has("items") ? config.getAsJsonArray("items") : new JsonArray();
 
             // Check if the position exists in the "items" array
-            if (position < 0 || position >= itemsArray.size()) {
+            if (position < 0 || position > itemsArray.size()) {
                 return false;  // If the position is invalid, return false
             }
 

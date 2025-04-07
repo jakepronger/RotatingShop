@@ -36,13 +36,12 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
         // console supported
         if (args.length == 1 && args[0].equalsIgnoreCase("reload") && sender.isOp()) {
 
-            long delay = Utils.reload();
-            String message = Utils.format("&aReloaded in &f" + delay + "ms&a.");
+            String message = plugin.reload();
 
             Logger.log(message);
 
             if (sender instanceof Player p) {
-                p.sendMessage(message);
+                p.sendMessage(Utils.format(message));
             }
 
             return;
@@ -77,8 +76,8 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
                     return;
                 }
 
-                long delay = Utils.reload();
-                p.sendMessage(Utils.format("&aReloaded in &f" + delay + "ms&a."));
+                String message = plugin.reload();
+                p.sendMessage(message);
 
                 return;
 

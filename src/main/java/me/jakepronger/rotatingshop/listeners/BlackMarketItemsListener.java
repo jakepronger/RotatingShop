@@ -82,31 +82,23 @@ public class BlackMarketItemsListener implements Listener {
                 BlackMarketGUI.open(p);
             } else if (openValue.equalsIgnoreCase("next")) {
 
-                Integer currentPage = null;
-                NamespacedKey key = new NamespacedKey(plugin, "page");
-                PersistentDataContainer dataContainer = p.getPersistentDataContainer();
-                if (dataContainer.has(key)) {
-                    currentPage = dataContainer.get(key, PersistentDataType.INTEGER);
-                }
-
+                Integer currentPage = BlackMarketItemsGUI.getPlayerViewingPage(p);
                 if (currentPage == null)
                     currentPage = 1;
 
-                BlackMarketItemsGUI.open(p, currentPage+1);
+                int maxPage = BlackMarketItemsGUI.getMaxPage();
+
+                if (currentPage < maxPage)
+                    BlackMarketItemsGUI.open(p, currentPage+1);
 
             } else if (openValue.equalsIgnoreCase("back")) {
 
-                Integer currentPage = null;
-                NamespacedKey key = new NamespacedKey(plugin, "page");
-                PersistentDataContainer dataContainer = p.getPersistentDataContainer();
-                if (dataContainer.has(key)) {
-                    currentPage = dataContainer.get(key, PersistentDataType.INTEGER);
-                }
-
+                Integer currentPage = BlackMarketItemsGUI.getPlayerViewingPage(p);
                 if (currentPage == null)
                     currentPage = 1;
 
-                BlackMarketItemsGUI.open(p, currentPage-1);
+                if (currentPage > 1)
+                    BlackMarketItemsGUI.open(p, currentPage-1);
             }
         }
     }

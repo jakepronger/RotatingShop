@@ -1,6 +1,5 @@
 package me.jakepronger.rotatingshop.gui;
 
-import me.jakepronger.rotatingshop.config.DataUtils;
 import me.jakepronger.rotatingshop.utils.InvUtils;
 import me.jakepronger.rotatingshop.utils.Utils;
 
@@ -29,7 +28,9 @@ public class BlackMarketItemsGUI {
 
     public static void open(Player p, int page) {
 
-        DataUtils data = plugin.getDataUtils();
+        //DataUtils data = plugin.getDataUtils();
+
+        setPage(p, page);
 
         Inventory inv = InvUtils.loadInventory("editor.gui", p);
 
@@ -38,40 +39,24 @@ public class BlackMarketItemsGUI {
             return;
         }
 
-        List<Integer> editorSlots = plugin.getConfigUtils().getEditorItemSlots();
-        int editorSlotsAmount = editorSlots.size();
+        //List<Integer> editorSlots = ;
+        //int editorSlotsAmount = editorSlots.size();
 
         // todo: verify max page number
-        if (page < 1) {
-            page = 1;
-        }
-
-        double maxValue = (double)data.getItemsAmount() / (double)editorSlotsAmount;
-        if (maxValue % 1 != 0) {
-            maxValue++;
-        }
-
-        int maxPage = (int)maxValue;
-
-        if (page > maxPage && maxPage != 0)
-            page = maxPage;
+        int maxPage = getMaxPage();
+        page = verifyPage(page, maxPage);
 
         Bukkit.broadcastMessage("opened editor at page: " + page);
 
-        int firstSlotIndex = editorSlotsAmount*(page-1) + 1;
-        Bukkit.broadcastMessage("editorSlotsAmount: " + editorSlotsAmount);
-        Bukkit.broadcastMessage("firstSlotIndex: " + firstSlotIndex);
+        int firstSlotIndex = getFirstSlotIndex(page);
+        //Bukkit.broadcastMessage("editorSlotsAmount: " + editorSlotsAmount);
+        //Bukkit.broadcastMessage("firstSlotIndex: " + firstSlotIndex);
 
-        NamespacedKey key = new NamespacedKey(plugin, "page");
-
-        PersistentDataContainer dataContainer = p.getPersistentDataContainer();
-        dataContainer.set(key, PersistentDataType.INTEGER, page);
-
-        ArrayList<Map.Entry<ItemStack, Double>> items = data.getItems();
+        ArrayList<Map.Entry<ItemStack, Double>> items = plugin.getDataUtils().getItems();
 
         int loopIndex = firstSlotIndex;
 
-        for (int editorSlot : editorSlots) {
+        for (int editorSlot : plugin.getConfigUtils().getEditorItemSlots()) {
 
             if (loopIndex > items.size()) {
                 break;
@@ -112,6 +97,42 @@ public class BlackMarketItemsGUI {
 
         openInventories.put(p, inv);
         p.openInventory(inv);
+    }
+
+    public static Integer getPlayerViewingPage(Player p) {
+        Integer currentPage = null;
+        NamespacedKey key = new NamespacedKey(plugin, "page");
+        PersistentDataContainer dataContainer = p.getPersistentDataContainer();
+        if (dataContainer.has(key)) {
+            currentPage = dataContainer.get(key, PersistentDataType.INTEGER);
+        }
+        return currentPage;
+    }
+
+    public static int getMaxPage() {
+        double maxValue = (double)plugin.getDataUtils().getItemsAmount() / (double)plugin.getConfigUtils().getEditorItemSlots().size();
+        if (maxValue % 1 != 0) {
+            maxValue++;
+        }
+        return (int)maxValue;
+    }
+
+    private static void setPage(Player p, int page) {
+        NamespacedKey key = new NamespacedKey(plugin, "page");
+        PersistentDataContainer dataContainer = p.getPersistentDataContainer();
+        dataContainer.set(key, PersistentDataType.INTEGER, page);
+    }
+
+    private static int getFirstSlotIndex(int page) {
+        return plugin.getConfigUtils().getEditorItemSlots().size()*(page-1) + 1;
+    }
+
+    private static int verifyPage(int page, int maxPage) {
+        if (page < 1)
+            page = 1;
+        if (page > maxPage && maxPage != 0)
+            page = maxPage;
+        return page;
     }
 
 }

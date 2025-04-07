@@ -42,30 +42,20 @@ public class TimerUtils {
         useTimer = config.isTimerEnabled();
 
         // if timer minutes is less than one use default value
-        int timerMinutes = config.getTimerMinutes();
+        timerMinutes = config.getTimerMinutes();
 
-        if (config.getTimerMinutes() < 1)
-            this.timerMinutes = 5;
-        else this.timerMinutes = timerMinutes;
+        if (timerMinutes < 1)
+            timerMinutes = 5;
 
-        Logger.log("┎ &eLoaded timer settings");
-        Logger.log("┃ &fUptime Timer: " + (this.useTimer ? "&aOn" : "&cOff"));
-        Logger.log("┃ &fDuration: " + (this.useTimer ? "&a" : "&c") + this.timerMinutes + " minutes");
-
-        int rotateMinutes = plugin.getConfigUtils().getItemRotateMinutes();
+        rotateMinutes = plugin.getConfigUtils().getItemRotateMinutes();
 
         // if timer minutes is less than one use default value
-        if (rotateMinutes < 1) {
-            this.rotateMinutes = 360;
-        } else this.rotateMinutes = rotateMinutes;
-
-        Logger.log("┎ &eCurrent Rotation");
-        Logger.log("┃ &fRemaining: &a" + getMinutesLeft() + " minutes");
-        Logger.log("┃ &fRotate every: &a" + rotateMinutes + " minutes");
-        Logger.debug("Uptime: " + UPTIME);
+        if (rotateMinutes < 1)
+            rotateMinutes = 360;
     }
 
-    private long getMinutesLeft() {
+    // todo: might keep private just need something for debug %time-left% vars
+    public long getMinutesLeft() {
         return rotateMinutes - UPTIME;
     }
 
@@ -103,7 +93,13 @@ public class TimerUtils {
 
         }, ticks, ticks).getTaskId();
 
-        Logger.log("&aStarted rotation timer.");
+        //Logger.log("&aStarted rotation timer.");
+        Logger.log("┎ &eLoaded rotation timer");
+        Logger.log("┃ &fTime left: &a" + getMinutesLeft() + " minutes");
+        Logger.log("┃ &fRotate every: &a" + rotateMinutes + " minutes");
+        Logger.debug("Uptime: " + UPTIME);
+        //Logger.log("┃ &aTimer has started.");
+
     }
 
     public void stopRotateTimer() {
@@ -133,7 +129,11 @@ public class TimerUtils {
             updateUptime(true);
         }, ticks, ticks).getTaskId();
 
-        Logger.log("&aStarted uptime timer.");
+        //Logger.log("&aStarted uptime timer.");
+
+        Logger.log("┎ &eLoaded timer settings");
+        Logger.log("┃ &fUptime Timer: " + (useTimer ? "&aOn" : "&cOff"));
+        Logger.log("┃ &fDuration: " + (useTimer ? "&a" : "&c") + timerMinutes + " minutes");
     }
 
     public void stopTimer() {

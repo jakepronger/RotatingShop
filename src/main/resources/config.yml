@@ -40,14 +40,14 @@ purchase:
 # GUI options
 # open: item.gui, shop.gui (path to gui config section) or 'next' or 'back' for pages?
 shop:
-  items: # purchasable items format (%name%, %lore%, %price%, %formatted-price%)
+  items: # purchasable items format (%item-name%, %item-lore%, %price%, %formatted-price%)
     rotation: 300 # in minutes
     slots: 12,13,14 # Slots to display purchasable items
     format:
-      name: "%name%"
+      name: "%item-name%"
       lore:
-        - "%lore%"
-        - "&7Price: &a%formatted-price% %price%"
+        - "%item-lore%"
+        - "&7Price: &a%formatted-price% &8- &a%price%"
         - "&8-> &aLeft click to purchase"
   gui:
     name: "Rotating Shop"
@@ -62,6 +62,8 @@ shop:
       name: "&#A900FFꜱ&#9C0DFFʜ&#8F1AFFᴀ&#8228FFʀ&#7535FFᴅ&#6842FFꜱ &#4E5DFFʙ&#416AFFᴀ&#3477FFʟ&#2784FFᴀ&#1A92FFɴ&#0D9FFFᴄ&#00ACFFᴇ"
       glowing: true
       type: PRISMARINE_SHARD
+      lore:
+        - "&b%formatted-balance% &8- &b%balance%"
     26:
       name: "&#FF0000ᴛɪᴍᴇ ʟᴇꜰᴛ"
       glowing: true # enchant the item without showing enchantment flags
@@ -80,12 +82,12 @@ shop:
         type: BARRIER
 
 editor:
-  items: # purchasable item format (%name%, %lore%, %price%, %formatted-price%)
+  items: # purchasable item format (%item-name%, %item-lore%, %price%, %formatted-price%)
     slots: 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44
     format:
-      name: "%name%"
+      name: "%item-name%"
       lore:
-        - "%lore%"
+        - "%item-lore%"
         - "&7Price: &a%formatted-price% %price%" # %price%, %formatted-price%
         - "&8-> &aLeft click to purchase"
   gui:

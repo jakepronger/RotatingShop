@@ -3,6 +3,7 @@ package me.jakepronger.rotatingshop.utils;
 import me.jakepronger.rotatingshop.gui.BlackMarketGUI;
 import me.jakepronger.rotatingshop.gui.BlackMarketItemsGUI;
 
+import org.black_ixx.playerpoints.PlayerPointsAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -57,7 +58,7 @@ public class InvUtils {
         return inv;
     }
 
-    public static ItemStack loadItem(ConfigurationSection cs) {
+    public static ItemStack loadItem(ConfigurationSection cs, Player p) {
 
         ItemStack item;
         ItemMeta meta;
@@ -74,9 +75,16 @@ public class InvUtils {
         meta = item.getItemMeta();
         pData = meta.getPersistentDataContainer();
 
+        PlayerPointsAPI ppApi = plugin.getPlayerPointsHook().get();
+
         String itemName = cs.getString(".name");
         if (itemName != null) {
-            meta.setDisplayName(Utils.format("&f" + itemName));
+            String displayName = Utils.format("&f" + itemName);
+            displayName
+                    .replace("%balance%", String.valueOf(ppApi.look(p.getUniqueId())))
+                    .replace("%formatted-balance%", ppApi.lookFormatted(p.getUniqueId())
+                    .replace("%time-left%", String.valueOf(plugin.getTimerUtils().getMinutesLeft())));
+            meta.setDisplayName(displayName);
         }
 
         boolean glowing = cs.getBoolean("glowing", false);
@@ -88,6 +96,9 @@ public class InvUtils {
         List<String> loreList = cs.getStringList("lore");
         if (!loreList.isEmpty()) {
             loreList.replaceAll(lore -> Utils.format("&f" + lore));
+            loreList.replaceAll(lore -> lore.replace("%balance%", String.valueOf(ppApi.look(p.getUniqueId()))));
+            loreList.replaceAll(lore -> lore.replace("%formatted-balance%", ppApi.lookFormatted(p.getUniqueId())));
+            loreList.replaceAll(lore -> lore.replace("%time-left%", String.valueOf(plugin.getTimerUtils().getMinutesLeft())));
             meta.setLore(loreList);
         }
 
@@ -154,8 +165,15 @@ public class InvUtils {
 
         // inventory properties
 
+        int pageNumber = 1;
+
+        Integer viewingPage = BlackMarketItemsGUI.getPlayerViewingPage(p);
+        if (viewingPage != null)
+            pageNumber = viewingPage;
+
         int rows = cs.getInt("rows", 3);
-        String name = cs.getString("name", "");
+        String name = cs.getString("name", "")
+                .replace("%page%", String.valueOf(pageNumber));
 
         Inventory inv;
         try {
@@ -197,7 +215,7 @@ public class InvUtils {
                         || !p.hasPermission(perm))
                     continue;
 
-                item = loadItem(permSection);
+                item = loadItem(permSection, p);
                 if (item != null) {
                     break;
                 }
@@ -205,7 +223,7 @@ public class InvUtils {
 
             // do default item if perm item wasn't found
             if (item == null) {
-                item = loadItem(itemSection);
+                item = loadItem(itemSection, p);
                 if (item == null) {
                     continue;
                 }
