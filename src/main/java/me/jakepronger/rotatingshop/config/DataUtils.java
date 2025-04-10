@@ -198,10 +198,14 @@ public class DataUtils {
     }
 
 
-    public CompletableFuture<Boolean> addItem(ItemStack item, double price) {
+    public CompletableFuture<Boolean> addItem(ItemStack itemProvided, double price) {
         int nextId = getNextIndex();
 
         return CompletableFuture.supplyAsync(() -> {
+
+            ItemStack item = new ItemStack(itemProvided.getType(), itemProvided.getAmount());
+            item.setItemMeta(itemProvided.getItemMeta());
+
             // Retrieve the "items" section (array) from the config, or create a new one if it doesn't exist
             JsonArray itemsArray = config.has("items") ? config.getAsJsonArray("items") : new JsonArray();
 

@@ -91,6 +91,7 @@ public class BlackMarketItemsGUI {
             item.setItemMeta(meta);
 
             inv.setItem(editorSlot, item);
+            Bukkit.broadcastMessage("set item in slot: " + editorSlot);
 
             loopIndex++;
         }
