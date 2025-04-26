@@ -1,5 +1,6 @@
 package me.jakepronger.rotatingshop.commands;
 
+import me.jakepronger.rotatingshop.RotatingShop;
 import me.jakepronger.rotatingshop.config.ConfigUtils;
 import me.jakepronger.rotatingshop.config.DataUtils;
 import me.jakepronger.rotatingshop.gui.BlackMarketGUI;
@@ -21,8 +22,6 @@ import org.bukkit.util.StringUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static me.jakepronger.rotatingshop.RotatingShop.plugin;
 
 @CommandInfo(name = "blackmarket", requiresPlayer = false)
 public class BlackMarketCommand extends PluginCommand implements TabExecutor {

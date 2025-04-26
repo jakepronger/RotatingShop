@@ -1,5 +1,6 @@
 package me.jakepronger.rotatingshop.utils.command;
 
+import me.jakepronger.rotatingshop.RotatingShop;
 import me.jakepronger.rotatingshop.utils.Utils;
 
 import org.bukkit.command.Command;
@@ -12,10 +13,13 @@ import java.util.Objects;
 
 public abstract class PluginCommand implements CommandExecutor {
 
+    // Get the global plugin instance
+    protected RotatingShop plugin = RotatingShop.getInstance();
+
     private final CommandInfo commandInfo;
 
     public PluginCommand() {
-        commandInfo = getClass().getDeclaredAnnotation(CommandInfo.class);
+        this.commandInfo = getClass().getDeclaredAnnotation(CommandInfo.class);
         Objects.requireNonNull(commandInfo, "Commands must have CommandInfo annotations");
     }
 
@@ -25,26 +29,32 @@ public abstract class PluginCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        // Check if the command requires a player and sender is not a player
+        if (commandInfo.requiresPlayer() && !(sender instanceof Player)) {
+            sender.sendMessage(Utils.format("&cThis command requires a player."));
+            return false;
+        }
 
+        // Handle the command execution
         if (sender instanceof ConsoleCommandSender) {
-
-            if (commandInfo.requiresPlayer()) {
-                sender.sendMessage(Utils.format("&cPlayer only command."));
-                return true;
-            }
-
-            execute(sender, label, args);
-
-        } else {
-            execute(sender, label, args);
-            execute((Player)sender, label, args);
+            handleConsoleCommand(sender, label, args);
+        } else if (sender instanceof Player) {
+            handlePlayerCommand((Player) sender, label, args);
         }
 
         return true;
     }
 
-    public void execute(Player player, String label, String[] args) {}
+    // This method can be overridden in specific command classes
+    protected void handlePlayerCommand(Player player, String label, String[] args) {
+        execute(player, label, args);
+    }
 
-    public void execute(CommandSender sender, String label, String[] args) {}
+    // This method can be overridden in specific command classes
+    protected void handleConsoleCommand(CommandSender sender, String label, String[] args) {
+        execute(sender, label, args);
+    }
 
+    // Override this method for the actual logic in each command class
+    protected abstract void execute(CommandSender sender, String label, String[] args);
 }

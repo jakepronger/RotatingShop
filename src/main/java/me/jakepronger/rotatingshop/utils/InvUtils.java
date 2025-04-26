@@ -119,6 +119,7 @@ public class InvUtils {
         // close all open BlackMarketGUI inventories
         for (Map.Entry<Player, Inventory> p : BlackMarketGUI.openInventories.entrySet()) {
             p.getKey().closeInventory();
+            //p.getValue().close();
         }
 
         int bmItemsGuiSize = BlackMarketItemsGUI.openInventories.size();
