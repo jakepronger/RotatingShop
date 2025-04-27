@@ -6,6 +6,7 @@ import me.jakepronger.rotatingshop.hooks.PlayerPointsHook;
 import me.jakepronger.rotatingshop.listeners.BlackMarketItemsListener;
 import me.jakepronger.rotatingshop.listeners.BlackMarketListener;
 import me.jakepronger.rotatingshop.config.DataUtils;
+import me.jakepronger.rotatingshop.managers.InventoryManager;
 import me.jakepronger.rotatingshop.utils.InvUtils;
 import me.jakepronger.rotatingshop.utils.Logger;
 
@@ -25,6 +26,8 @@ public class RotatingShop extends JavaPlugin {
     private DataUtils dataUtils;
     private RotationUtils rotationUtils;
     private TimerUtils timerUtils;
+
+    private InventoryManager inventoryManager;
 
     private PlayerPointsHook ppHook;
 
@@ -47,6 +50,8 @@ public class RotatingShop extends JavaPlugin {
         timerUtils = new TimerUtils(this);
         timerUtils.startRotateTimer();
         timerUtils.startTimer();
+
+        inventoryManager = new InventoryManager(instance);
 
         registerEvents();
         Logger.debug("Registered events.");
@@ -82,6 +87,10 @@ public class RotatingShop extends JavaPlugin {
      * Getter Methods
      */
 
+    public InventoryManager getInventoryManager() {
+        return inventoryManager;
+    }
+
     public ConfigUtils getConfigUtils() {
         return configUtils;
     }
@@ -108,14 +117,15 @@ public class RotatingShop extends JavaPlugin {
 
     private void registerEvents() {
         PluginManager pm = Bukkit.getPluginManager();
-        pm.registerEvents(new BlackMarketListener(), this);
-        pm.registerEvents(new BlackMarketItemsListener(), this);
+        pm.registerEvents(new BlackMarketListener(instance), this);
+        pm.registerEvents(new BlackMarketItemsListener(instance), this);
+        pm.registerEvents(new InventoryManager(instance), this);
     }
 
     private void registerCommands() {
         PluginCommand blackmarket = getCommand("blackmarket");
         if (blackmarket != null)
-            blackmarket.setExecutor(new BlackMarketCommand(this));
+            blackmarket.setExecutor(new BlackMarketCommand());
     }
 
     /**

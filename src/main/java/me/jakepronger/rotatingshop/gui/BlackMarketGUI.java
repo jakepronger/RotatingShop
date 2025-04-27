@@ -1,5 +1,6 @@
 package me.jakepronger.rotatingshop.gui;
 
+import me.jakepronger.rotatingshop.managers.InventoryManager;
 import me.jakepronger.rotatingshop.utils.InvUtils;
 
 import me.jakepronger.rotatingshop.utils.Utils;
@@ -7,13 +8,15 @@ import me.jakepronger.rotatingshop.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-import java.util.HashMap;
-
 public class BlackMarketGUI {
 
-    public static HashMap<Player, Inventory> openInventories = new HashMap<>();
+    private final InventoryManager invManager;
 
-    public static void open(Player p) {
+    public BlackMarketGUI(InventoryManager invManager) {
+        this.invManager = invManager;
+    }
+
+    public void open(Player p) {
 
         Inventory inv = InvUtils.loadInventory("shop.gui", p);
 
@@ -22,11 +25,11 @@ public class BlackMarketGUI {
             return;
         }
 
-        openInventories.put(p, inv);
+        invManager.addPlayer(p, InventoryManager.InventoryType.Menu);
         p.openInventory(inv);
     }
 
-    public static Inventory getInventory() {
+    public Inventory getInventory() {
         return null;
     }
 

@@ -30,14 +30,21 @@ public class ConfigUtils {
         loadConfig();
     }
 
-    /** Item Rotation Timer **/
+    /**
+     * Item Rotation Timer
+     */
+
     public boolean isTimerEnabled() {
         return config.getBoolean("time.uptime-updater.use", true);
     }
+
     public int getTimerMinutes() {
         return config.getInt("time.uptime-updater.minutes", 5);
     }
-    /** Item Rotation Timer **/
+
+    /**
+     * Permission checks
+     */
 
     public boolean hasReloadPerm(CommandSender s) {
         return !config.getBoolean("permissions.reload.require", true)
@@ -114,6 +121,10 @@ public class ConfigUtils {
         }
 
     }
+
+    /**
+     * Config file methods
+     */
 
     public void loadConfig() {
         loadConfig(false);

@@ -1,5 +1,7 @@
 package me.jakepronger.rotatingshop.gui;
 
+import me.jakepronger.rotatingshop.RotatingShop;
+import me.jakepronger.rotatingshop.managers.InventoryManager;
 import me.jakepronger.rotatingshop.utils.InvUtils;
 import me.jakepronger.rotatingshop.utils.Utils;
 
@@ -16,17 +18,18 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
 
-import static me.jakepronger.rotatingshop.RotatingShop.plugin;
-
 public class BlackMarketItemsGUI {
 
-    public static HashMap<Player, Inventory> openInventories = new HashMap<>();
+    private final RotatingShop plugin;
 
-    public static void open(Player p) {
-        open(p, 1);
+    private final InventoryManager invManager;
+
+    public BlackMarketItemsGUI(InventoryManager invManager) {
+        this.plugin = RotatingShop.getInstance();
+        this.invManager = invManager;
     }
 
-    public static void open(Player p, int page) {
+    public void open(Player p, int page) {
 
         //DataUtils data = plugin.getDataUtils();
 
@@ -96,11 +99,11 @@ public class BlackMarketItemsGUI {
             loopIndex++;
         }
 
-        openInventories.put(p, inv);
+        invManager.addPlayer(p, InventoryManager.InventoryType.Editor);
         p.openInventory(inv);
     }
 
-    public static Integer getPlayerViewingPage(Player p) {
+    public Integer getPlayerViewingPage(Player p) {
         Integer currentPage = null;
         NamespacedKey key = new NamespacedKey(plugin, "page");
         PersistentDataContainer dataContainer = p.getPersistentDataContainer();
@@ -110,7 +113,7 @@ public class BlackMarketItemsGUI {
         return currentPage;
     }
 
-    public static int getMaxPage() {
+    public int getMaxPage() {
         double maxValue = (double)plugin.getDataUtils().getItemsAmount() / (double)plugin.getConfigUtils().getEditorItemSlots().size();
         if (maxValue % 1 != 0) {
             maxValue++;
@@ -118,17 +121,17 @@ public class BlackMarketItemsGUI {
         return (int)maxValue;
     }
 
-    private static void setPage(Player p, int page) {
+    private void setPage(Player p, int page) {
         NamespacedKey key = new NamespacedKey(plugin, "page");
         PersistentDataContainer dataContainer = p.getPersistentDataContainer();
         dataContainer.set(key, PersistentDataType.INTEGER, page);
     }
 
-    private static int getFirstSlotIndex(int page) {
+    private int getFirstSlotIndex(int page) {
         return plugin.getConfigUtils().getEditorItemSlots().size()*(page-1) + 1;
     }
 
-    private static int verifyPage(int page, int maxPage) {
+    private int verifyPage(int page, int maxPage) {
         if (page < 1)
             page = 1;
         if (page > maxPage && maxPage != 0)

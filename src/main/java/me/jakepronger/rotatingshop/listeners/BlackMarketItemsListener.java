@@ -1,8 +1,10 @@
 package me.jakepronger.rotatingshop.listeners;
 
+import me.jakepronger.rotatingshop.RotatingShop;
 import me.jakepronger.rotatingshop.gui.BlackMarketGUI;
 import me.jakepronger.rotatingshop.gui.BlackMarketItemsGUI;
 
+import me.jakepronger.rotatingshop.managers.InventoryManager;
 import me.jakepronger.rotatingshop.utils.Utils;
 
 import org.bukkit.Bukkit;
@@ -16,9 +18,20 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import static me.jakepronger.rotatingshop.RotatingShop.plugin;
-
 public class BlackMarketItemsListener implements Listener {
+
+    private final RotatingShop plugin;
+
+    private final InventoryManager invManager;
+    private final BlackMarketGUI bmGUI;
+    private final BlackMarketItemsGUI bmItemsGUI;
+
+    public BlackMarketItemsListener(RotatingShop plugin) {
+        this.plugin = plugin;
+        this.invManager = plugin.getInventoryManager();
+        bmGUI = invManager.getBlackMarketGUI();
+        bmItemsGUI = invManager.getBlackMarketItemsGUI();
+    }
 
     @EventHandler
     public void onClick(InventoryClickEvent e) {
@@ -31,7 +44,7 @@ public class BlackMarketItemsListener implements Listener {
         Player p = (Player) e.getWhoClicked();
 
         // if open inventory doesn't match
-        if (!BlackMarketItemsGUI.openInventories.containsKey(p)) {
+        if (invManager.getInventoryType(p) != InventoryManager.InventoryType.Editor) {
             return;
         }
 
@@ -79,26 +92,26 @@ public class BlackMarketItemsListener implements Listener {
         String openValue = pData.get(new NamespacedKey(plugin, "open"), PersistentDataType.STRING);
         if (openValue != null) {
             if (openValue.equalsIgnoreCase("shop.gui")) {
-                BlackMarketGUI.open(p);
+                bmGUI.open(p);
             } else if (openValue.equalsIgnoreCase("next")) {
 
-                Integer currentPage = BlackMarketItemsGUI.getPlayerViewingPage(p);
+                Integer currentPage = bmItemsGUI.getPlayerViewingPage(p);
                 if (currentPage == null)
                     currentPage = 1;
 
-                int maxPage = BlackMarketItemsGUI.getMaxPage();
+                int maxPage = bmItemsGUI.getMaxPage();
 
                 if (currentPage < maxPage)
-                    BlackMarketItemsGUI.open(p, currentPage+1);
+                    bmItemsGUI.open(p, currentPage+1);
 
             } else if (openValue.equalsIgnoreCase("back")) {
 
-                Integer currentPage = BlackMarketItemsGUI.getPlayerViewingPage(p);
+                Integer currentPage = bmItemsGUI.getPlayerViewingPage(p);
                 if (currentPage == null)
                     currentPage = 1;
 
                 if (currentPage > 1)
-                    BlackMarketItemsGUI.open(p, currentPage-1);
+                    bmItemsGUI.open(p, currentPage-1);
             }
         }
     }
@@ -108,8 +121,8 @@ public class BlackMarketItemsListener implements Listener {
 
         Player p = (Player) e.getPlayer();
 
-        if (BlackMarketItemsGUI.openInventories.containsKey(p)
-            && BlackMarketItemsGUI.openInventories.get(p) == e.getInventory()) {
+        if (bmItemsGUI.openInventories.containsKey(p)
+            && bmItemsGUI.openInventories.get(p) == e.getInventory()) {
 
             NamespacedKey key = new NamespacedKey(plugin, "page");
 

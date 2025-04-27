@@ -1,6 +1,5 @@
 package me.jakepronger.rotatingshop.commands;
 
-import me.jakepronger.rotatingshop.RotatingShop;
 import me.jakepronger.rotatingshop.config.ConfigUtils;
 import me.jakepronger.rotatingshop.config.DataUtils;
 import me.jakepronger.rotatingshop.gui.BlackMarketGUI;
@@ -26,8 +25,13 @@ import java.util.List;
 @CommandInfo(name = "blackmarket", requiresPlayer = false)
 public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
-    // item in main hand
-    // /bm add <price>
+    private final BlackMarketGUI bmGUI;
+    private final BlackMarketItemsGUI bmItemsGUI;
+
+    public BlackMarketCommand() {
+        bmGUI = plugin.getBlackMarketGUI();
+        bmItemsGUI = plugin.getBlackMarketItemsGUI();
+    }
 
     @Override
     public void execute(CommandSender sender, String label, String[] args) {
@@ -62,7 +66,7 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
                 return;
             }
 
-            BlackMarketGUI.open(p);
+            bmGUI.open(p);
 
             return;
 
@@ -87,7 +91,7 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
                     return;
                 }
 
-                BlackMarketItemsGUI.open(p);
+                bmItemsGUI.open(p, 1);
 
                 return;
 

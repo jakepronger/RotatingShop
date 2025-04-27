@@ -1,24 +1,32 @@
 package me.jakepronger.rotatingshop.listeners;
 
-import me.jakepronger.rotatingshop.gui.BlackMarketGUI;
+import me.jakepronger.rotatingshop.RotatingShop;
 import me.jakepronger.rotatingshop.gui.BlackMarketItemsGUI;
 
+import me.jakepronger.rotatingshop.managers.InventoryManager;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import static me.jakepronger.rotatingshop.RotatingShop.plugin;
-
 public class BlackMarketListener implements Listener {
 
+    private RotatingShop plugin;
+
+    private InventoryManager invManager;
+    private BlackMarketItemsGUI bmItemsGUI;
+
+    public BlackMarketListener(RotatingShop plugin) {
+        this.invManager = plugin.getInventoryManager();
+        this.bmItemsGUI = plugin.getBlackMarketItemsGUI();
+    }
+
     @EventHandler
-    public void onClick(InventoryClickEvent e) {
+    public void onInventoryClick(InventoryClickEvent e) {
 
         // if clicked inventory is null, player's inventory doesn't match
         if (e.getClickedInventory() == null
@@ -28,7 +36,7 @@ public class BlackMarketListener implements Listener {
         Player p = (Player) e.getWhoClicked();
 
         // if open inventory doesn't match
-        if (!BlackMarketGUI.openInventories.containsKey(p)) {
+        if (invManager.getInventoryType(p) != InventoryManager.InventoryType.Menu) {
             return;
         }
 
@@ -44,18 +52,8 @@ public class BlackMarketListener implements Listener {
         String openValue = pData.get(new NamespacedKey(plugin, "open"), PersistentDataType.STRING);
         if (openValue != null
                 && openValue.equalsIgnoreCase("editor.gui")) {
-            BlackMarketItemsGUI.open(p);
+            bmItemsGUI.open(p, 1);
         }
-    }
-
-    @EventHandler
-    public void onClose(InventoryCloseEvent e) {
-
-        Player p = (Player) e.getPlayer();
-
-        if (BlackMarketGUI.openInventories.containsKey(p)
-            && BlackMarketGUI.openInventories.get(p) == e.getInventory())
-            BlackMarketGUI.openInventories.remove(p);
     }
 
 }
