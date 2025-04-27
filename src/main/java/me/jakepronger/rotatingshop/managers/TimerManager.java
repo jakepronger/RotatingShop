@@ -1,19 +1,18 @@
-package me.jakepronger.rotatingshop.utils;
+package me.jakepronger.rotatingshop.managers;
 
 import me.jakepronger.rotatingshop.RotatingShop;
-import me.jakepronger.rotatingshop.config.ConfigUtils;
 
-import me.jakepronger.rotatingshop.config.DataUtils;
+import me.jakepronger.rotatingshop.utils.Logger;
 import org.bukkit.Bukkit;
 
 import java.util.concurrent.CompletableFuture;
 
 import static me.jakepronger.rotatingshop.RotatingShop.plugin;
 
-public class TimerUtils {
+public class TimerManager {
 
-    private final ConfigUtils config;
-    private final DataUtils data;
+    private final ConfigManager config;
+    private final DataManager data;
 
     private final long START_TIME;
     private long UPTIME;
@@ -26,7 +25,7 @@ public class TimerUtils {
     private int uptimeTimerId;
     private int rotateTimerId;
 
-    public TimerUtils(RotatingShop plugin) {
+    public TimerManager(RotatingShop plugin) {
 
         this.config = plugin.getConfigUtils();
         this.data = plugin.getDataUtils();

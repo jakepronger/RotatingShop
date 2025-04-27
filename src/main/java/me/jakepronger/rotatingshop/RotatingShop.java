@@ -1,17 +1,17 @@
 package me.jakepronger.rotatingshop;
 
 import me.jakepronger.rotatingshop.commands.BlackMarketCommand;
-import me.jakepronger.rotatingshop.config.ConfigUtils;
+import me.jakepronger.rotatingshop.managers.ConfigManager;
 import me.jakepronger.rotatingshop.hooks.PlayerPointsHook;
 import me.jakepronger.rotatingshop.listeners.BlackMarketItemsListener;
 import me.jakepronger.rotatingshop.listeners.BlackMarketListener;
-import me.jakepronger.rotatingshop.config.DataUtils;
+import me.jakepronger.rotatingshop.managers.DataManager;
 import me.jakepronger.rotatingshop.managers.InventoryManager;
 import me.jakepronger.rotatingshop.utils.InvUtils;
 import me.jakepronger.rotatingshop.utils.Logger;
 
-import me.jakepronger.rotatingshop.utils.RotationUtils;
-import me.jakepronger.rotatingshop.utils.TimerUtils;
+import me.jakepronger.rotatingshop.managers.RotationManager;
+import me.jakepronger.rotatingshop.managers.TimerManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
@@ -22,10 +22,10 @@ public class RotatingShop extends JavaPlugin {
 
     private static RotatingShop instance;
 
-    private ConfigUtils configUtils;
-    private DataUtils dataUtils;
-    private RotationUtils rotationUtils;
-    private TimerUtils timerUtils;
+    private ConfigManager configUtils;
+    private DataManager dataUtils;
+    private RotationManager rotationUtils;
+    private TimerManager timerUtils;
 
     private InventoryManager inventoryManager;
 
@@ -36,8 +36,8 @@ public class RotatingShop extends JavaPlugin {
 
         instance = this;
 
-        configUtils = new ConfigUtils(this);
-        dataUtils = new DataUtils("data.json");
+        configUtils = new ConfigManager(this);
+        dataUtils = new DataManager("data.json");
         ppHook = new PlayerPointsHook(this);
 
         if (!ppHook.hook()) {
@@ -45,9 +45,9 @@ public class RotatingShop extends JavaPlugin {
             return;
         }
 
-        rotationUtils = new RotationUtils(dataUtils, configUtils);
+        rotationUtils = new RotationManager(dataUtils, configUtils);
 
-        timerUtils = new TimerUtils(this);
+        timerUtils = new TimerManager(this);
         timerUtils.startRotateTimer();
         timerUtils.startTimer();
 
@@ -79,31 +79,31 @@ public class RotatingShop extends JavaPlugin {
         });
     }
 
-    public static RotatingShop getInstance() {
-        return instance; // Global access to the plugin instance
-    }
-
     /**
      * Getter Methods
      */
+
+    public static RotatingShop getInstance() {
+        return instance; // Global access to the plugin instance
+    }
 
     public InventoryManager getInventoryManager() {
         return inventoryManager;
     }
 
-    public ConfigUtils getConfigUtils() {
+    public ConfigManager getConfigUtils() {
         return configUtils;
     }
 
-    public DataUtils getDataUtils() {
+    public DataManager getDataUtils() {
         return dataUtils;
     }
 
-    public TimerUtils getTimerUtils() {
+    public TimerManager getTimerUtils() {
         return timerUtils;
     }
 
-    public RotationUtils getRotationUtils() {
+    public RotationManager getRotationUtils() {
         return rotationUtils;
     }
 

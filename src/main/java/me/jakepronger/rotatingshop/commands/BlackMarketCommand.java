@@ -1,7 +1,7 @@
 package me.jakepronger.rotatingshop.commands;
 
-import me.jakepronger.rotatingshop.config.ConfigUtils;
-import me.jakepronger.rotatingshop.config.DataUtils;
+import me.jakepronger.rotatingshop.managers.ConfigManager;
+import me.jakepronger.rotatingshop.managers.DataManager;
 import me.jakepronger.rotatingshop.gui.BlackMarketGUI;
 import me.jakepronger.rotatingshop.gui.BlackMarketItemsGUI;
 import me.jakepronger.rotatingshop.utils.Logger;
@@ -57,7 +57,7 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
         Player p = (Player) sender;
 
-        ConfigUtils config = plugin.getConfigUtils();
+        ConfigManager config = plugin.getConfigUtils();
 
         if (args.length == 0) {
 
@@ -125,7 +125,7 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
                 return;
             }
 
-            DataUtils data = plugin.getDataUtils();
+            DataManager data = plugin.getDataUtils();
 
             // (async) store item data and price flags are price, (quantity stored in item)
             data.addItem(item, price).whenComplete((value, throwable) -> {
@@ -154,7 +154,7 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
         final List<String> completions = new ArrayList<>();
 
-        ConfigUtils config = plugin.getConfigUtils();
+        ConfigManager config = plugin.getConfigUtils();
 
         if (args.length == 1) {
 

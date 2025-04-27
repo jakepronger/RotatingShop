@@ -1,7 +1,4 @@
-package me.jakepronger.rotatingshop.utils;
-
-import me.jakepronger.rotatingshop.config.ConfigUtils;
-import me.jakepronger.rotatingshop.config.DataUtils;
+package me.jakepronger.rotatingshop.managers;
 
 import org.bukkit.inventory.ItemStack;
 
@@ -11,16 +8,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class RotationUtils {
+public class RotationManager {
 
     // todo: add logs
 
     private final HashMap<Integer, Map.Entry<ItemStack, Double>> items;
 
-    private final DataUtils dataUtils;
-    private final ConfigUtils configUtils;
+    private final DataManager dataUtils;
+    private final ConfigManager configUtils;
 
-    public RotationUtils(DataUtils dataUtils, ConfigUtils configUtils) {
+    public RotationManager(DataManager dataUtils, ConfigManager configUtils) {
 
         this.dataUtils = dataUtils;
         this.configUtils = configUtils;

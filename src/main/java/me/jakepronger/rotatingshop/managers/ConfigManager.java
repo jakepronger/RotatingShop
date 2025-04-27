@@ -1,4 +1,4 @@
-package me.jakepronger.rotatingshop.config;
+package me.jakepronger.rotatingshop.managers;
 
 import me.jakepronger.rotatingshop.utils.Logger;
 import me.jakepronger.rotatingshop.utils.Utils;
@@ -11,7 +11,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConfigUtils {
+public class ConfigManager {
 
     private final JavaPlugin plugin;
 
@@ -20,7 +20,7 @@ public class ConfigUtils {
 
     private FileConfiguration config;
 
-    public ConfigUtils(JavaPlugin plugin) {
+    public ConfigManager(JavaPlugin plugin) {
 
         this.plugin = plugin;
 
