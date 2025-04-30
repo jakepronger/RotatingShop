@@ -7,7 +7,6 @@ import me.jakepronger.rotatingshop.listeners.BlackMarketItemsListener;
 import me.jakepronger.rotatingshop.listeners.BlackMarketListener;
 import me.jakepronger.rotatingshop.managers.DataManager;
 import me.jakepronger.rotatingshop.managers.InventoryManager;
-import me.jakepronger.rotatingshop.utils.InvUtils;
 import me.jakepronger.rotatingshop.utils.Logger;
 
 import me.jakepronger.rotatingshop.managers.RotationManager;

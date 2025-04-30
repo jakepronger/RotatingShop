@@ -7,6 +7,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,6 +44,24 @@ public class Utils {
 
     public static net.md_5.bungee.api.ChatColor getColorFromHex(String hex) {
         return net.md_5.bungee.api.ChatColor.of(hex.toLowerCase());
+    }
+
+    public static List<Integer> getIntsSeparatedByCommas(String text) {
+
+        List<Integer> list = new ArrayList<>();
+
+        for (String value : text.split(",")) {
+            try {
+                list.add(Integer.parseInt(value));
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        if (list.isEmpty())
+            return null;
+
+        return list;
     }
 
 }

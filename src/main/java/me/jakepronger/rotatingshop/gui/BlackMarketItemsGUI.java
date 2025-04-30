@@ -2,7 +2,6 @@ package me.jakepronger.rotatingshop.gui;
 
 import me.jakepronger.rotatingshop.RotatingShop;
 import me.jakepronger.rotatingshop.managers.InventoryManager;
-import me.jakepronger.rotatingshop.utils.InvUtils;
 import me.jakepronger.rotatingshop.utils.Utils;
 
 import net.kyori.adventure.text.Component;
