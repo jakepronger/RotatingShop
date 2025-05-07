@@ -136,7 +136,7 @@ public class RotatingShop extends JavaPlugin {
         long delay = System.currentTimeMillis();
 
         Logger.log("&cReloading...");
-        Logger.log("&aClosed &f" + InvUtils.closeInventories() + "&a inventories.");
+        Logger.log("&aClosed &f" + inventoryManager.closeInventories() + "&a inventories.");
 
         getConfigUtils().reloadConfig();
         getDataUtils().reloadConfig();

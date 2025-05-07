@@ -112,7 +112,7 @@ public class BlackMarketItemsGUI {
         return currentPage;
     }
 
-    public int getMaxPage() {
+    public int getMaxEditorPage() {
         double maxValue = (double)plugin.getDataUtils().getItemsAmount() / (double)plugin.getConfigUtils().getEditorItemSlots().size();
         if (maxValue % 1 != 0) {
             maxValue++;

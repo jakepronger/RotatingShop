@@ -6,7 +6,9 @@ import me.jakepronger.rotatingshop.gui.BlackMarketItemsGUI;
 import me.jakepronger.rotatingshop.utils.ItemUtils;
 import me.jakepronger.rotatingshop.utils.Logger;
 import me.jakepronger.rotatingshop.utils.Utils;
+
 import org.black_ixx.playerpoints.PlayerPointsAPI;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -56,7 +58,7 @@ public class InventoryManager implements Listener {
      * Ref blank text: " "
      */
 
-    public Inventory createInventory(String title, int rows) {
+    public Inventory create(String title, int rows) {
         if (title == null) {
             return Bukkit.createInventory(null, 9 * rows);
         } else if (title.equalsIgnoreCase("")) {
@@ -69,8 +71,8 @@ public class InventoryManager implements Listener {
     /**
      * Create two material background cross checkered inventory
      */
-    public Inventory createInventory(String title, int rows, Material type1, Material type2, String type1Name, String type2Name) {
-        Inventory inv = createInventory(title, rows);
+    public Inventory create(String title, int rows, Material type1, Material type2, String type1Name, String type2Name) {
+        Inventory inv = create(title, rows);
 
         ItemStack item1 = ItemUtils.getItem(type1, type1Name);
         ItemStack item2 = ItemUtils.getItem(type2, type2Name);
@@ -93,7 +95,7 @@ public class InventoryManager implements Listener {
      * Load inventory methods
      */
 
-    public static Inventory loadInventory(String configSection, Player p) {
+    public Inventory load(String configSection, Player p) {
 
         // Player p: for permission checks
         // path: shop.gui
@@ -182,7 +184,7 @@ public class InventoryManager implements Listener {
         return inv;
     }
 
-    public static ItemStack loadItem(ConfigurationSection cs, Player p) {
+    public ItemStack loadItem(ConfigurationSection cs, Player p) {
 
         ItemStack item;
         ItemMeta meta;
@@ -240,20 +242,20 @@ public class InventoryManager implements Listener {
      * Player inventory methods
      */
 
-    public static int closeInventories() {
+    public int closeAll() {
 
-        int bmGuiSize = BlackMarketGUI.openInventories.size();
+        int bmGuiSize = openInventories.size();
 
         // close all open BlackMarketGUI inventories
-        for (Map.Entry<Player, Inventory> p : BlackMarketGUI.openInventories.entrySet()) {
+        for (Map.Entry<Player, Inventory> p : openInventories.entrySet()) {
             p.getKey().closeInventory();
             p.getValue().close();
         }
 
-        int bmItemsGuiSize = BlackMarketItemsGUI.openInventories.size();
+        int bmItemsGuiSize = openInventories.size();
 
         // close all open BlackMarketItemsGUI inventories
-        for (Map.Entry<Player, Inventory> p : BlackMarketItemsGUI.openInventories.entrySet()) {
+        for (Map.Entry<Player, Inventory> p : openInventories.entrySet()) {
             p.getKey().closeInventory();
         }
 
