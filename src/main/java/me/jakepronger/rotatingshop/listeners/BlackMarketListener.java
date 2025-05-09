@@ -2,8 +2,8 @@ package me.jakepronger.rotatingshop.listeners;
 
 import me.jakepronger.rotatingshop.RotatingShop;
 import me.jakepronger.rotatingshop.gui.BlackMarketItemsGUI;
-
 import me.jakepronger.rotatingshop.managers.InventoryManager;
+
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,14 +15,15 @@ import org.bukkit.persistence.PersistentDataType;
 
 public class BlackMarketListener implements Listener {
 
-    private RotatingShop plugin;
+    private final RotatingShop plugin;
 
-    private InventoryManager invManager;
-    private BlackMarketItemsGUI bmItemsGUI;
+    private final InventoryManager invManager;
+    private final BlackMarketItemsGUI bmItemsGUI;
 
     public BlackMarketListener(RotatingShop plugin) {
+        this.plugin = plugin;
         this.invManager = plugin.getInventoryManager();
-        this.bmItemsGUI = plugin.getBlackMarketItemsGUI();
+        this.bmItemsGUI = invManager.getBlackMarketItemsGUI();
     }
 
     @EventHandler
@@ -36,7 +37,7 @@ public class BlackMarketListener implements Listener {
         Player p = (Player) e.getWhoClicked();
 
         // if open inventory doesn't match
-        if (invManager.getInventoryType(p) != InventoryManager.InventoryType.Menu) {
+        if (invManager.getShopView(p) != InventoryManager.ShopView.Menu) {
             return;
         }
 

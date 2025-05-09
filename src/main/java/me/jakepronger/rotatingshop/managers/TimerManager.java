@@ -7,12 +7,13 @@ import org.bukkit.Bukkit;
 
 import java.util.concurrent.CompletableFuture;
 
-import static me.jakepronger.rotatingshop.RotatingShop.plugin;
-
 public class TimerManager {
+
+    private final RotatingShop plugin;
 
     private final ConfigManager config;
     private final DataManager data;
+    private final RotationManager rotation;
 
     private final long START_TIME;
     private long UPTIME;
@@ -27,8 +28,11 @@ public class TimerManager {
 
     public TimerManager(RotatingShop plugin) {
 
-        this.config = plugin.getConfigUtils();
-        this.data = plugin.getDataUtils();
+        this.plugin = plugin;
+
+        config = plugin.getConfigManager();
+        data = plugin.getDataManager();
+        rotation = plugin.getRotationManager();
 
         START_TIME = System.currentTimeMillis();
 
@@ -46,7 +50,7 @@ public class TimerManager {
         if (timerMinutes < 1)
             timerMinutes = 5;
 
-        rotateMinutes = plugin.getConfigUtils().getItemRotateMinutes();
+        rotateMinutes = config.getItemRotateMinutes();
 
         // if timer minutes is less than one use default value
         if (rotateMinutes < 1)
@@ -76,7 +80,7 @@ public class TimerManager {
             });
 
             // todo: rotate items + logs
-            plugin.getRotationUtils().rotateItems().whenComplete((value, throwable) -> {
+            rotation.rotateItems().whenComplete((value, throwable) -> {
                 Logger.log("&d&lDEBUG rotationCalled");
             });
         }
@@ -86,7 +90,7 @@ public class TimerManager {
         rotateTimerId = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
 
             // todo: rotate items + logs
-            plugin.getRotationUtils().rotateItems().whenComplete((value, throwable) -> {
+            rotation.rotateItems().whenComplete((value, throwable) -> {
                 Logger.log("&d&lDEBUG rotationCalled");
             });
 

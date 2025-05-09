@@ -2,6 +2,7 @@ package me.jakepronger.rotatingshop.managers;
 
 import com.google.gson.*;
 
+import me.jakepronger.rotatingshop.RotatingShop;
 import me.jakepronger.rotatingshop.utils.ItemSerializer;
 import me.jakepronger.rotatingshop.utils.Logger;
 
@@ -15,9 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import static me.jakepronger.rotatingshop.RotatingShop.plugin;
-
 public class DataManager {
+
+    private final RotatingShop plugin;
 
     private final List<Integer> rotationInts;
     private final ArrayList<Map.Entry<ItemStack, Double>> items;
@@ -26,7 +27,8 @@ public class DataManager {
     private JsonObject config;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    public DataManager(String fileName) {
+    public DataManager(RotatingShop plugin, String fileName) {
+        this.plugin = plugin;
         file = new File(plugin.getDataFolder(), fileName);
 
         rotationInts = new ArrayList<>();

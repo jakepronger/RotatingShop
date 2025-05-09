@@ -34,14 +34,15 @@ import java.util.UUID;
 
 public class InventoryManager implements Listener {
 
-    public enum InventoryType {
+    public enum ShopView {
         Menu,
         Editor
     }
 
     private final RotatingShop plugin;
+    private final TimerManager timer;
 
-    private final HashMap<UUID, InventoryType> openInventories;
+    private final HashMap<UUID, ShopView> openInventories;
 
     private final BlackMarketGUI bmGUI;
     private final BlackMarketItemsGUI bmItemsGUI;
@@ -51,6 +52,7 @@ public class InventoryManager implements Listener {
         bmGUI = new BlackMarketGUI(this);
         bmItemsGUI = new BlackMarketItemsGUI(this);
         plugin = instance; // TODO: change to metadata manager
+        timer = plugin.getTimerManager();
     }
 
     /**
@@ -113,7 +115,7 @@ public class InventoryManager implements Listener {
 
         int pageNumber = 1;
 
-        Integer viewingPage = BlackMarketItemsGUI.getPlayerViewingPage(p);
+        Integer viewingPage = bmItemsGUI.getPlayerViewingPage(p);
         if (viewingPage != null)
             pageNumber = viewingPage;
 
@@ -138,7 +140,7 @@ public class InventoryManager implements Listener {
                 continue;
             }
 
-            List<Integer> slots = getIntsSeparatedByCommas(key);
+            List<Integer> slots = Utils.getIntsSeparatedByCommas(key);
             if (slots == null) {
                 continue;
             }
@@ -209,7 +211,7 @@ public class InventoryManager implements Listener {
             displayName
                     .replace("%balance%", String.valueOf(ppApi.look(p.getUniqueId())))
                     .replace("%formatted-balance%", ppApi.lookFormatted(p.getUniqueId())
-                            .replace("%time-left%", String.valueOf(plugin.getTimerUtils().getMinutesLeft())));
+                            .replace("%time-left%", String.valueOf(timer.getMinutesLeft())));
             meta.setDisplayName(displayName);
         }
 
@@ -224,7 +226,7 @@ public class InventoryManager implements Listener {
             loreList.replaceAll(lore -> Utils.format("&f" + lore));
             loreList.replaceAll(lore -> lore.replace("%balance%", String.valueOf(ppApi.look(p.getUniqueId()))));
             loreList.replaceAll(lore -> lore.replace("%formatted-balance%", ppApi.lookFormatted(p.getUniqueId())));
-            loreList.replaceAll(lore -> lore.replace("%time-left%", String.valueOf(plugin.getTimerUtils().getMinutesLeft())));
+            loreList.replaceAll(lore -> lore.replace("%time-left%", String.valueOf(timer.getMinutesLeft())));
             meta.setLore(loreList);
         }
 
@@ -244,22 +246,19 @@ public class InventoryManager implements Listener {
 
     public int closeAll() {
 
-        int bmGuiSize = openInventories.size();
+        int openInvSize = openInventories.size();
 
         // close all open BlackMarketGUI inventories
-        for (Map.Entry<Player, Inventory> p : openInventories.entrySet()) {
-            p.getKey().closeInventory();
-            p.getValue().close();
+        for (Map.Entry<UUID, ShopView> p : openInventories.entrySet()) {
+            Player player = Bukkit.getPlayer(p.getKey());
+            if (player != null) {
+                player.closeInventory();
+            } else {
+                openInventories.remove(p.getKey());
+            }
         }
 
-        int bmItemsGuiSize = openInventories.size();
-
-        // close all open BlackMarketItemsGUI inventories
-        for (Map.Entry<Player, Inventory> p : openInventories.entrySet()) {
-            p.getKey().closeInventory();
-        }
-
-        return bmGuiSize + bmItemsGuiSize;
+        return openInvSize;
     }
 
     /**
@@ -282,8 +281,8 @@ public class InventoryManager implements Listener {
         return openInventories.containsKey(p.getUniqueId());
     }
 
-    public void addPlayer(Player p, InventoryType inventoryType) {
-        openInventories.put(p.getUniqueId(), inventoryType);
+    public void addPlayer(Player p, ShopView shopView) {
+        openInventories.put(p.getUniqueId(), shopView);
     }
 
     public void removePlayer(Player p) {
@@ -291,7 +290,7 @@ public class InventoryManager implements Listener {
     }
 
     @Nullable
-    public InventoryType getInventoryType(Player p) {
+    public ShopView getShopView(Player p) {
         return openInventories.getOrDefault(p.getUniqueId(), null);
     }
 
@@ -315,9 +314,9 @@ public class InventoryManager implements Listener {
 
         if (hasPlayer(p)) {
 
-            InventoryType invType = getInventoryType(p);
+            ShopView shopView = getShopView(p);
 
-            if (invType == InventoryType.Editor) {
+            if (shopView == ShopView.Editor) {
                 // TODO: should be managed in a metadata manager
                 NamespacedKey key = new NamespacedKey(plugin, "page");
 

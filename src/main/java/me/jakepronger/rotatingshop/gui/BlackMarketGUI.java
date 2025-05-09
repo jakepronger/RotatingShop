@@ -17,14 +17,14 @@ public class BlackMarketGUI {
 
     public void open(Player p) {
 
-        Inventory inv = InvUtils.loadInventory("shop.gui", p);
+        Inventory inv = invManager.load("shop.gui", p);
 
         if (inv == null) {
             p.sendMessage(Utils.format("&cFailed to load inventory!"));
             return;
         }
 
-        invManager.addPlayer(p, InventoryManager.InventoryType.Menu);
+        invManager.addPlayer(p, InventoryManager.ShopView.Menu);
         p.openInventory(inv);
     }
 

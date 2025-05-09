@@ -4,6 +4,7 @@ import me.jakepronger.rotatingshop.managers.ConfigManager;
 import me.jakepronger.rotatingshop.managers.DataManager;
 import me.jakepronger.rotatingshop.gui.BlackMarketGUI;
 import me.jakepronger.rotatingshop.gui.BlackMarketItemsGUI;
+import me.jakepronger.rotatingshop.managers.InventoryManager;
 import me.jakepronger.rotatingshop.utils.Logger;
 import me.jakepronger.rotatingshop.utils.Utils;
 import me.jakepronger.rotatingshop.utils.command.CommandInfo;
@@ -25,12 +26,13 @@ import java.util.List;
 @CommandInfo(name = "blackmarket", requiresPlayer = false)
 public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
-    private final BlackMarketGUI bmGUI;
-    private final BlackMarketItemsGUI bmItemsGUI;
+    private final InventoryManager invManager;
+
+    private final ConfigManager config;
 
     public BlackMarketCommand() {
-        bmGUI = plugin.getBlackMarketGUI();
-        bmItemsGUI = plugin.getBlackMarketItemsGUI();
+        invManager = plugin.getInventoryManager();
+        config = plugin.getConfigManager();
     }
 
     @Override
@@ -57,8 +59,6 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
 
         Player p = (Player) sender;
 
-        ConfigManager config = plugin.getConfigUtils();
-
         if (args.length == 0) {
 
             if (!config.hasBlackMarketPerm(sender)) {
@@ -66,7 +66,7 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
                 return;
             }
 
-            bmGUI.open(p);
+            invManager.getBlackMarketGUI().open(p);
 
             return;
 
@@ -91,7 +91,7 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
                     return;
                 }
 
-                bmItemsGUI.open(p, 1);
+                invManager.getBlackMarketItemsGUI().open(p, 1);
 
                 return;
 
@@ -125,7 +125,7 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
                 return;
             }
 
-            DataManager data = plugin.getDataUtils();
+            DataManager data = plugin.getDataManager();
 
             // (async) store item data and price flags are price, (quantity stored in item)
             data.addItem(item, price).whenComplete((value, throwable) -> {
@@ -153,8 +153,6 @@ public class BlackMarketCommand extends PluginCommand implements TabExecutor {
         final List<String> twoArgList = new ArrayList<>();
 
         final List<String> completions = new ArrayList<>();
-
-        ConfigManager config = plugin.getConfigUtils();
 
         if (args.length == 1) {
 

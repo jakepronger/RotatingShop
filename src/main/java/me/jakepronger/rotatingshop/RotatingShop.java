@@ -1,17 +1,17 @@
 package me.jakepronger.rotatingshop;
 
 import me.jakepronger.rotatingshop.commands.BlackMarketCommand;
-import me.jakepronger.rotatingshop.managers.ConfigManager;
-import me.jakepronger.rotatingshop.hooks.PlayerPointsHook;
 import me.jakepronger.rotatingshop.listeners.BlackMarketItemsListener;
 import me.jakepronger.rotatingshop.listeners.BlackMarketListener;
+import me.jakepronger.rotatingshop.managers.ConfigManager;
+import me.jakepronger.rotatingshop.hooks.PlayerPointsHook;
 import me.jakepronger.rotatingshop.managers.DataManager;
 import me.jakepronger.rotatingshop.managers.InventoryManager;
-import me.jakepronger.rotatingshop.utils.Logger;
 
 import me.jakepronger.rotatingshop.managers.RotationManager;
 import me.jakepronger.rotatingshop.managers.TimerManager;
 
+import me.jakepronger.rotatingshop.utils.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.PluginManager;
@@ -21,12 +21,14 @@ public class RotatingShop extends JavaPlugin {
 
     private static RotatingShop instance;
 
-    private ConfigManager configUtils;
-    private DataManager dataUtils;
-    private RotationManager rotationUtils;
-    private TimerManager timerUtils;
+    private ConfigManager configManager;
+    private DataManager dataManager;
 
-    private InventoryManager inventoryManager;
+    // todo: combine both?
+    private RotationManager rotationManager;
+    private TimerManager timerManager;
+
+    private InventoryManager invManager;
 
     private PlayerPointsHook ppHook;
 
@@ -35,8 +37,8 @@ public class RotatingShop extends JavaPlugin {
 
         instance = this;
 
-        configUtils = new ConfigManager(this);
-        dataUtils = new DataManager("data.json");
+        configManager = new ConfigManager(this);
+        dataManager = new DataManager(instance, "data.json");
         ppHook = new PlayerPointsHook(this);
 
         if (!ppHook.hook()) {
@@ -44,13 +46,13 @@ public class RotatingShop extends JavaPlugin {
             return;
         }
 
-        rotationUtils = new RotationManager(dataUtils, configUtils);
+        rotationManager = new RotationManager(dataManager, configManager);
 
-        timerUtils = new TimerManager(this);
-        timerUtils.startRotateTimer();
-        timerUtils.startTimer();
+        timerManager = new TimerManager(this);
+        timerManager.startRotateTimer();
+        timerManager.startTimer();
 
-        inventoryManager = new InventoryManager(instance);
+        invManager = new InventoryManager(instance);
 
         registerEvents();
         Logger.debug("Registered events.");
@@ -65,10 +67,10 @@ public class RotatingShop extends JavaPlugin {
     public void onDisable() {
 
         ppHook.unhook();
-        timerUtils.stopRotateTimer();
-        timerUtils.stopTimer();
+        timerManager.stopRotateTimer();
+        timerManager.stopTimer();
 
-        timerUtils.updateUptime().whenComplete((result, throwable) -> {
+        timerManager.updateUptime().whenComplete((result, throwable) -> {
 
             if (throwable != null) {
                 Logger.error("Error updating uptime: " + throwable.getMessage());
@@ -87,23 +89,23 @@ public class RotatingShop extends JavaPlugin {
     }
 
     public InventoryManager getInventoryManager() {
-        return inventoryManager;
+        return invManager;
     }
 
-    public ConfigManager getConfigUtils() {
-        return configUtils;
+    public ConfigManager getConfigManager() {
+        return configManager;
     }
 
-    public DataManager getDataUtils() {
-        return dataUtils;
+    public DataManager getDataManager() {
+        return dataManager;
     }
 
-    public TimerManager getTimerUtils() {
-        return timerUtils;
+    public TimerManager getTimerManager() {
+        return timerManager;
     }
 
-    public RotationManager getRotationUtils() {
-        return rotationUtils;
+    public RotationManager getRotationManager() {
+        return rotationManager;
     }
 
     public PlayerPointsHook getPlayerPointsHook() {
@@ -116,9 +118,9 @@ public class RotatingShop extends JavaPlugin {
 
     private void registerEvents() {
         PluginManager pm = Bukkit.getPluginManager();
+        pm.registerEvents(new InventoryManager(instance), this);
         pm.registerEvents(new BlackMarketListener(instance), this);
         pm.registerEvents(new BlackMarketItemsListener(instance), this);
-        pm.registerEvents(new InventoryManager(instance), this);
     }
 
     private void registerCommands() {
@@ -136,10 +138,10 @@ public class RotatingShop extends JavaPlugin {
         long delay = System.currentTimeMillis();
 
         Logger.log("&cReloading...");
-        Logger.log("&aClosed &f" + inventoryManager.closeInventories() + "&a inventories.");
+        Logger.log("&aClosed &f" + invManager.closeAll() + "&a inventories.");
 
-        getConfigUtils().reloadConfig();
-        getDataUtils().reloadConfig();
+        configManager.reloadConfig();
+        dataManager.reloadConfig();
 
         PlayerPointsHook ppHook = getPlayerPointsHook();
         ppHook.unhook();
@@ -148,8 +150,8 @@ public class RotatingShop extends JavaPlugin {
             return "";
         }
 
-        getTimerUtils().reloadTimer();
-        getRotationUtils().reload();
+        timerManager.reloadTimer();
+        rotationManager.reload();
 
         long duration = System.currentTimeMillis() - delay;
 

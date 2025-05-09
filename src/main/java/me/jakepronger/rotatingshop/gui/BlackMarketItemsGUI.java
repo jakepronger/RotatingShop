@@ -1,6 +1,8 @@
 package me.jakepronger.rotatingshop.gui;
 
 import me.jakepronger.rotatingshop.RotatingShop;
+import me.jakepronger.rotatingshop.managers.ConfigManager;
+import me.jakepronger.rotatingshop.managers.DataManager;
 import me.jakepronger.rotatingshop.managers.InventoryManager;
 import me.jakepronger.rotatingshop.utils.Utils;
 
@@ -21,10 +23,15 @@ public class BlackMarketItemsGUI {
 
     private final RotatingShop plugin;
 
+    private final DataManager data;
+    private final ConfigManager config;
+
     private final InventoryManager invManager;
 
     public BlackMarketItemsGUI(InventoryManager invManager) {
         this.plugin = RotatingShop.getInstance();
+        this.data = plugin.getDataManager();
+        this.config = plugin.getConfigManager();
         this.invManager = invManager;
     }
 
@@ -34,7 +41,7 @@ public class BlackMarketItemsGUI {
 
         setPage(p, page);
 
-        Inventory inv = InvUtils.loadInventory("editor.gui", p);
+        Inventory inv = invManager.load("editor.gui", p);
 
         if (inv == null) {
             p.sendMessage(Utils.format("&cFailed to load inventory!"));
@@ -45,7 +52,7 @@ public class BlackMarketItemsGUI {
         //int editorSlotsAmount = editorSlots.size();
 
         // todo: verify max page number
-        int maxPage = getMaxPage();
+        int maxPage = getMaxEditorPage();
         page = verifyPage(page, maxPage);
 
         Bukkit.broadcastMessage("opened editor at page: " + page);
@@ -54,11 +61,11 @@ public class BlackMarketItemsGUI {
         //Bukkit.broadcastMessage("editorSlotsAmount: " + editorSlotsAmount);
         //Bukkit.broadcastMessage("firstSlotIndex: " + firstSlotIndex);
 
-        ArrayList<Map.Entry<ItemStack, Double>> items = plugin.getDataUtils().getItems();
+        ArrayList<Map.Entry<ItemStack, Double>> items = data.getItems();
 
         int loopIndex = firstSlotIndex;
 
-        for (int editorSlot : plugin.getConfigUtils().getEditorItemSlots()) {
+        for (int editorSlot : config.getEditorItemSlots()) {
 
             if (loopIndex > items.size()) {
                 break;
@@ -98,7 +105,7 @@ public class BlackMarketItemsGUI {
             loopIndex++;
         }
 
-        invManager.addPlayer(p, InventoryManager.InventoryType.Editor);
+        invManager.addPlayer(p, InventoryManager.ShopView.Editor);
         p.openInventory(inv);
     }
 
@@ -113,7 +120,7 @@ public class BlackMarketItemsGUI {
     }
 
     public int getMaxEditorPage() {
-        double maxValue = (double)plugin.getDataUtils().getItemsAmount() / (double)plugin.getConfigUtils().getEditorItemSlots().size();
+        double maxValue = (double)data.getItemsAmount() / (double)config.getEditorItemSlots().size();
         if (maxValue % 1 != 0) {
             maxValue++;
         }
@@ -127,7 +134,7 @@ public class BlackMarketItemsGUI {
     }
 
     private int getFirstSlotIndex(int page) {
-        return plugin.getConfigUtils().getEditorItemSlots().size()*(page-1) + 1;
+        return config.getEditorItemSlots().size()*(page-1) + 1;
     }
 
     private int verifyPage(int page, int maxPage) {

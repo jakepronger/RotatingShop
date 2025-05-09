@@ -4,6 +4,7 @@ import me.jakepronger.rotatingshop.RotatingShop;
 import me.jakepronger.rotatingshop.gui.BlackMarketGUI;
 import me.jakepronger.rotatingshop.gui.BlackMarketItemsGUI;
 
+import me.jakepronger.rotatingshop.managers.DataManager;
 import me.jakepronger.rotatingshop.managers.InventoryManager;
 import me.jakepronger.rotatingshop.utils.Utils;
 
@@ -13,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -22,6 +22,8 @@ public class BlackMarketItemsListener implements Listener {
 
     private final RotatingShop plugin;
 
+    private final DataManager data;
+
     private final InventoryManager invManager;
     private final BlackMarketGUI bmGUI;
     private final BlackMarketItemsGUI bmItemsGUI;
@@ -29,6 +31,7 @@ public class BlackMarketItemsListener implements Listener {
     public BlackMarketItemsListener(RotatingShop plugin) {
         this.plugin = plugin;
         this.invManager = plugin.getInventoryManager();
+        data = plugin.getDataManager();
         bmGUI = invManager.getBlackMarketGUI();
         bmItemsGUI = invManager.getBlackMarketItemsGUI();
     }
@@ -44,7 +47,7 @@ public class BlackMarketItemsListener implements Listener {
         Player p = (Player) e.getWhoClicked();
 
         // if open inventory doesn't match
-        if (invManager.getInventoryType(p) != InventoryManager.InventoryType.Editor) {
+        if (invManager.getShopView(p) != InventoryManager.ShopView.Editor) {
             return;
         }
 
@@ -82,7 +85,7 @@ public class BlackMarketItemsListener implements Listener {
             p.closeInventory();
             p.sendMessage(Utils.format("&aPurchased!"));
 
-            plugin.getDataUtils().removeAndShiftItem(index).whenComplete((value, throwable) -> {
+            data.removeAndShiftItem(index).whenComplete((value, throwable) -> {
                p.sendMessage(Utils.format("&aremoved item at index " + index));
             });
 
@@ -99,7 +102,7 @@ public class BlackMarketItemsListener implements Listener {
                 if (currentPage == null)
                     currentPage = 1;
 
-                int maxPage = bmItemsGUI.getMaxPage();
+                int maxPage = bmItemsGUI.getMaxEditorPage();
 
                 if (currentPage < maxPage)
                     bmItemsGUI.open(p, currentPage+1);
@@ -114,26 +117,6 @@ public class BlackMarketItemsListener implements Listener {
                     bmItemsGUI.open(p, currentPage-1);
             }
         }
-    }
-
-    @EventHandler
-    public void onClose(InventoryCloseEvent e) {
-
-        Player p = (Player) e.getPlayer();
-
-        if (bmItemsGUI.openInventories.containsKey(p)
-            && bmItemsGUI.openInventories.get(p) == e.getInventory()) {
-
-            NamespacedKey key = new NamespacedKey(plugin, "page");
-
-            PersistentDataContainer dataContainer = p.getPersistentDataContainer();
-            if (dataContainer.has(key)) {
-                dataContainer.remove(key);
-            }
-
-            BlackMarketItemsGUI.openInventories.remove(p);
-        }
-
     }
 
 }
