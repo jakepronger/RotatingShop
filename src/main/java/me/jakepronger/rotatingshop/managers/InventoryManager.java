@@ -304,11 +304,7 @@ public class InventoryManager implements Listener {
 
         Bukkit.broadcastMessage("InventoryCloseEvent Debug 1.");
 
-        Player p = e.getPlayer().getKiller();
-        if (p == null) {
-            Bukkit.broadcastMessage("InventoryCloseEvent e.getPlayer().getKiller() is null");
-            return;
-        }
+        Player p = (Player) e.getPlayer();
 
         Bukkit.broadcastMessage("InventoryCloseEvent e.getPlayer().getKiller() not null");
 
