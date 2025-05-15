@@ -2,6 +2,7 @@ package me.jakepronger.rotatingshop.gui;
 
 import me.jakepronger.rotatingshop.managers.InventoryManager;
 
+import me.jakepronger.rotatingshop.utils.Logger;
 import me.jakepronger.rotatingshop.utils.Utils;
 
 import org.bukkit.entity.Player;
@@ -24,8 +25,10 @@ public class BlackMarketGUI {
             return;
         }
 
-        invManager.addPlayer(p, InventoryManager.ShopView.Menu);
         p.openInventory(inv);
+
+        invManager.addPlayer(p, InventoryManager.ShopView.Menu);
+        Logger.log("ADDED PLAYER TO MENU");
     }
 
     public Inventory getInventory() {

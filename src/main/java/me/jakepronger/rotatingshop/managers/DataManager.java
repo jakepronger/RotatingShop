@@ -47,10 +47,13 @@ public class DataManager {
     public CompletableFuture<Void> setUptime(long uptime) {
         return CompletableFuture.runAsync(() -> {
             // Set the new uptime in the JSON config
+            Logger.log("ADDING PROPERTY TO CONFIG: " + uptime);
             config.addProperty("current-uptime", uptime);
+            Logger.log("ADDED PROPERTY TO CONFIG: " + uptime);
 
             // Save the updated config to the file
             save(config);  // Assuming this method saves the config correctly
+            Logger.log("SAVED CONFIG");
         });
     }
 

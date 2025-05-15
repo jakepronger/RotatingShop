@@ -4,6 +4,7 @@ import me.jakepronger.rotatingshop.RotatingShop;
 import me.jakepronger.rotatingshop.managers.ConfigManager;
 import me.jakepronger.rotatingshop.managers.DataManager;
 import me.jakepronger.rotatingshop.managers.InventoryManager;
+import me.jakepronger.rotatingshop.utils.Logger;
 import me.jakepronger.rotatingshop.utils.Utils;
 
 import net.kyori.adventure.text.Component;
@@ -100,13 +101,15 @@ public class BlackMarketItemsGUI {
             item.setItemMeta(meta);
 
             inv.setItem(editorSlot, item);
-            Bukkit.broadcastMessage("set item in slot: " + editorSlot);
+            //Bukkit.broadcastMessage("set item in slot: " + editorSlot);
 
             loopIndex++;
         }
 
-        invManager.addPlayer(p, InventoryManager.ShopView.Editor);
         p.openInventory(inv);
+
+        invManager.addPlayer(p, InventoryManager.ShopView.Editor);
+        Logger.log("ADDED PLAYER TO EDITORs");
     }
 
     public Integer getPlayerViewingPage(Player p) {

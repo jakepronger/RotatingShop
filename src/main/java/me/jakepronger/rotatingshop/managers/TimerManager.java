@@ -176,7 +176,11 @@ public class TimerManager {
 
         long newUptime;
         if (timerUpdate) {
+            Logger.log("DEBUG updateTimer(true)");
             newUptime = UPTIME + timerMinutes;
+            Logger.log("Uptime: " + UPTIME);
+            Logger.log("TimerMinutes: " + timerMinutes);
+            Logger.log("New Uptime: " + newUptime);
             TIMER_CHECK = System.currentTimeMillis();
         } else {
             newUptime = UPTIME + ((System.currentTimeMillis() - getLastUpdated()) / 1000 / 60);
@@ -197,6 +201,7 @@ public class TimerManager {
         }
 
         UPTIME = newUptime;
+        Logger.log("Updated uptime: " + UPTIME);
 
         // update new uptime in config
         data.setUptime(UPTIME).whenComplete((result, throwable) -> {
@@ -204,6 +209,7 @@ public class TimerManager {
             Logger.debug("Updated uptime in data.json: " + UPTIME);
 
             if (rotateRequired) {
+                rotation.rotateItems();
                 // todo: rotate items + logs
             }
 

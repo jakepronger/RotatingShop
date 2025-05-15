@@ -118,7 +118,7 @@ public class RotatingShop extends JavaPlugin {
 
     private void registerEvents() {
         PluginManager pm = Bukkit.getPluginManager();
-        pm.registerEvents(new InventoryManager(instance), this);
+        pm.registerEvents(invManager, this);
         pm.registerEvents(new BlackMarketListener(instance), this);
         pm.registerEvents(new BlackMarketItemsListener(instance), this);
     }
