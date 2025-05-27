@@ -1,8 +1,8 @@
 package me.jakepronger.rotatingshop.managers;
 
 import me.jakepronger.rotatingshop.RotatingShop;
-
 import me.jakepronger.rotatingshop.utils.Logger;
+
 import org.bukkit.Bukkit;
 
 import java.util.concurrent.CompletableFuture;

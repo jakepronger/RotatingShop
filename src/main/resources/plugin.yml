@@ -8,4 +8,4 @@ author: jakepronger
 commands:
   blackmarket:
     aliases: bm
-    description: something
+    description: Opens the blackmarket shop.
